@@ -1,0 +1,945 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unified Quantum-Mystical System</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #0a0a0a;
+            color: #fff;
+            overflow: hidden;
+            touch-action: none;
+        }
+        
+        #canvas {
+            display: block;
+            cursor: crosshair;
+        }
+        
+        .controls {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(20px);
+            padding: 25px;
+            border-radius: 16px;
+            border: 1px solid rgba(0, 255, 136, 0.3);
+            max-width: 340px;
+            transform: translateX(0);
+            transition: transform 0.4s ease, opacity 0.4s ease;
+            box-shadow: 0 8px 32px rgba(0, 255, 136, 0.2);
+            max-height: 85vh;
+            overflow-y: auto;
+            z-index: 100;
+        }
+        
+        .controls.hidden {
+            transform: translateX(-110%);
+            opacity: 0;
+            pointer-events: none;
+        }
+        
+        .controls h2 {
+            margin-bottom: 20px;
+            font-size: 20px;
+            color: #00ff88;
+            text-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+        }
+        
+        .control-group {
+            margin-bottom: 18px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            opacity: 0.9;
+            color: #00ffaa;
+        }
+        
+        select, input[type="range"] {
+            width: 100%;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.12);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            border-radius: 8px;
+            color: #fff;
+            font-size: 14px;
+            transition: border-color 0.3s ease;
+        }
+        
+        select:focus, input[type="range"]:focus {
+            outline: none;
+            border-color: #00ff88;
+        }
+        
+        input[type="range"] {
+            padding: 6px 0;
+        }
+        
+        .button-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        button {
+            padding: 12px;
+            background: linear-gradient(135deg, #00ff88, #0088ff);
+            border: none;
+            border-radius: 8px;
+            color: #000;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            font-size: 10px;
+            letter-spacing: 0.5px;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 255, 136, 0.3);
+        }
+        
+        .toggle-menu {
+            position: absolute;
+            top: 20px;
+            left: 370px;
+            background: rgba(0, 255, 136, 0.9);
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            color: #000;
+            font-size: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+        
+        .toggle-menu:hover {
+            transform: scale(1.1) rotate(90deg);
+        }
+        
+        .toggle-menu.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+        
+        .stats {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(15px);
+            padding: 20px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-family: 'Courier New', monospace;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: opacity 0.4s ease, transform 0.4s ease;
+            z-index: 100;
+        }
+        
+        .stats.hidden {
+            opacity: 0;
+            transform: translateY(-20px);
+            pointer-events: none;
+        }
+        
+        .quantum-indicator {
+            margin-top: 15px;
+            padding: 12px;
+            background: rgba(0, 255, 136, 0.15);
+            border-radius: 8px;
+            font-size: 11px;
+            text-align: center;
+            border: 1px solid rgba(0, 255, 136, 0.3);
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        
+        .fullscreen-toggle {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(0, 255, 136, 0.9);
+            border: none;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            color: #000;
+            font-size: 24px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+        
+        .fullscreen-toggle:hover {
+            transform: scale(1.1);
+        }
+        
+        .help-overlay {
+            position: absolute;
+            bottom: 90px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(15px);
+            padding: 15px;
+            border-radius: 12px;
+            font-size: 10px;
+            border: 1px solid rgba(0, 255, 136, 0.3);
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            pointer-events: none;
+            z-index: 99;
+        }
+        
+        .help-overlay.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .help-overlay div {
+            margin: 5px 0;
+            color: #00ff88;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="canvas"></canvas>
+    
+    <button class="toggle-menu" id="toggleMenu">☰</button>
+    
+    <div class="controls" id="controls">
+        <h2>🔮 Mystical Algebra System</h2>
+        
+        <div class="control-group">
+            <label>🎭 Sacred Geometry Mode</label>
+            <select id="geometryMode">
+                <option value="hydra">Hydra (Lemniscate)</option>
+                <option value="kite">Kite (Mirror Hall)</option>
+                <option value="calceJack">Calce Jack (Spiral)</option>
+                <option value="e8">E8 Lattice</option>
+                <option value="unified">Unified Field</option>
+            </select>
+        </div>
+        
+        <div class="control-group">
+            <label>🎵 Solfeggio Audio</label>
+            <select id="audioMode">
+                <option value="off">Audio Off</option>
+                <option value="solfeggio">Solfeggio Frequencies</option>
+                <option value="golden">Golden Ratio φ</option>
+                <option value="528">528 Hz DNA Repair</option>
+            </select>
+        </div>
+        
+        <div class="control-group">
+            <label>Frequency: <span id="currentFreq">--</span></label>
+            <label>Volume: <span id="volumeLabel">50%</span></label>
+            <input type="range" id="volume" min="0" max="100" value="50">
+        </div>
+        
+        <div class="control-group">
+            <label>📐 Projection Type</label>
+            <select id="projection">
+                <option value="orthographic">Orthographic</option>
+                <option value="perspective">Perspective</option>
+                <option value="stereographic">Stereographic</option>
+            </select>
+        </div>
+        
+        <div class="control-group">
+            <label>🎭 3D Stereoscopic</label>
+            <select id="stereoMode">
+                <option value="none">None (2D)</option>
+                <option value="anaglyph">Anaglyph</option>
+                <option value="side-by-side">Side-by-Side VR</option>
+            </select>
+        </div>
+        
+        <div class="control-group">
+            <label>Eye Sep: <span id="eyeSepLabel">65mm</span></label>
+            <input type="range" id="eyeSeparation" min="0" max="150" value="65">
+        </div>
+        
+        <div class="control-group">
+            <label>Particles: <span id="particleCountLabel">800</span></label>
+            <input type="range" id="particleCount" min="200" max="2000" value="800" step="100">
+        </div>
+        
+        <div class="control-group">
+            <label>Hyperbola: <span id="hyperLabel">1.0</span></label>
+            <input type="range" id="hyperFactor" min="0" max="3" value="1" step="0.1">
+        </div>
+        
+        <div class="control-group">
+            <label>Phase φ: <span id="phaseLabel">0.0</span></label>
+            <input type="range" id="algebraPhase" min="0" max="6.28" value="0" step="0.01">
+        </div>
+        
+        <div class="control-group">
+            <label>Non-Assoc: <span id="nonAssocLabel">0.0</span></label>
+            <input type="range" id="nonAssoc" min="0" max="1" value="0" step="0.01">
+        </div>
+        
+        <div class="button-group">
+            <button id="collapse">Collapse</button>
+            <button id="reset">Reset</button>
+            <button id="autoRotate">Auto Spiral</button>
+            <button id="colorScheme">Transmute</button>
+        </div>
+        
+        <div class="quantum-indicator" id="indicator">
+            🌀 Hydra Mode: Infinity in a Grain of Sand
+        </div>
+    </div>
+    
+    <div class="stats" id="stats">
+        <div>FPS: <span id="fps">60</span></div>
+        <div>Particles: <span id="activeParticles">0</span></div>
+        <div>Geometry: <span id="geomDisplay">Hydra</span></div>
+        <div>3D: <span id="stereoDisplay">2D</span></div>
+        <div>Audio: <span id="audioStatus">Off</span></div>
+    </div>
+    
+    <button class="fullscreen-toggle" id="fullscreenToggle">👁️</button>
+    
+    <div class="help-overlay" id="helpOverlay">
+        <div><strong>Keyboard Shortcuts:</strong></div>
+        <div>F - Fullscreen View</div>
+        <div>Tab - Toggle Menu</div>
+        <div>Space - Auto Rotate</div>
+        <div>1-5 - Geometry Modes</div>
+        <div>C - Randomize Colors</div>
+        <div>R - Reset</div>
+        <div>H - Toggle Help</div>
+    </div>
+    
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        const PHI = 1.618033988749895;
+        
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+        
+        // Audio System
+        class BinauralAudioSystem {
+            constructor() {
+                this.audioContext = null;
+                this.leftOsc = null;
+                this.rightOsc = null;
+                this.leftGain = null;
+                this.rightGain = null;
+                this.merger = null;
+                this.isPlaying = false;
+                this.currentFreq = 0;
+                this.solfeggioFreqs = [174, 285, 396, 417, 528, 639, 741, 852];
+            }
+            
+            init() {
+                if (!this.audioContext) {
+                    this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                    this.merger = this.audioContext.createChannelMerger(2);
+                    
+                    this.leftOsc = this.audioContext.createOscillator();
+                    this.leftGain = this.audioContext.createGain();
+                    this.leftOsc.connect(this.leftGain);
+                    this.leftGain.connect(this.merger, 0, 0);
+                    
+                    this.rightOsc = this.audioContext.createOscillator();
+                    this.rightGain = this.audioContext.createGain();
+                    this.rightOsc.connect(this.rightGain);
+                    this.rightGain.connect(this.merger, 0, 1);
+                    
+                    this.merger.connect(this.audioContext.destination);
+                    
+                    this.leftOsc.type = 'sine';
+                    this.rightOsc.type = 'sine';
+                    this.leftOsc.start();
+                    this.rightOsc.start();
+                }
+            }
+            
+            setFrequency(baseFreq, mode = 'golden') {
+                if (!this.audioContext) return;
+                this.currentFreq = baseFreq;
+                this.leftOsc.frequency.setValueAtTime(baseFreq, this.audioContext.currentTime);
+                const offset = mode === 'golden' ? PHI : 2;
+                this.rightOsc.frequency.setValueAtTime(baseFreq + offset, this.audioContext.currentTime);
+            }
+            
+            setVolume(vol) {
+                if (this.leftGain && this.rightGain) {
+                    this.leftGain.gain.setValueAtTime(vol, this.audioContext.currentTime);
+                    this.rightGain.gain.setValueAtTime(vol, this.audioContext.currentTime);
+                }
+            }
+            
+            start(mode) {
+                this.init();
+                this.isPlaying = true;
+                const freq = mode === '528' ? 528 : this.solfeggioFreqs[0];
+                this.setFrequency(freq, mode === 'golden' ? 'golden' : 'normal');
+            }
+            
+            stop() {
+                if (this.leftGain && this.rightGain) {
+                    this.leftGain.gain.setValueAtTime(0, this.audioContext.currentTime);
+                    this.rightGain.gain.setValueAtTime(0, this.audioContext.currentTime);
+                }
+                this.isPlaying = false;
+            }
+        }
+        
+        const audioSystem = new BinauralAudioSystem();
+        
+        // Sacred Geometry
+        class SacredGeometry {
+            static lemniscate(t, scale = 200) {
+                const a = scale;
+                const denom = 1 + Math.sin(t) * Math.sin(t);
+                return {
+                    x: (a * Math.cos(t)) / denom,
+                    y: (a * Math.sin(t) * Math.cos(t)) / denom,
+                    z: Math.sin(t * 2) * scale * 0.3
+                };
+            }
+            
+            static sinusoidalSpiral(t, phase, n = 2) {
+                const r = Math.cos(n * t / 2);
+                const theta = t + phase;
+                return {
+                    x: r * Math.cos(theta) * 200,
+                    y: r * Math.sin(theta) * 200,
+                    z: Math.sin(t * n) * 100
+                };
+            }
+            
+            static mirrorHall(t, phase) {
+                const x = Math.cos(t) + Math.cos(3 * t + phase);
+                const y = Math.sin(t) - Math.sin(3 * t + phase);
+                return {
+                    x: x * 150,
+                    y: y * 150,
+                    z: (Math.cos(2 * t) + Math.sin(4 * t)) * 80
+                };
+            }
+            
+            static e8Point(index, phase, roots) {
+                const root = roots[index % roots.length];
+                const phi = PHI;
+                const cos = Math.cos(phase);
+                const sin = Math.sin(phase);
+                
+                return {
+                    x: (root[0] + root[1] * phi) * cos * 50,
+                    y: (root[2] + root[3] / phi) * cos * 50,
+                    z: (root[4] + root[5] * phi) * sin * 50
+                };
+            }
+        }
+        
+        function generateE8Roots() {
+            const roots = [];
+            for (let i = 0; i < 8; i++) {
+                for (let j = i + 1; j < 8; j++) {
+                    for (let si = -1; si <= 1; si += 2) {
+                        for (let sj = -1; sj <= 1; sj += 2) {
+                            const root = new Array(8).fill(0);
+                            root[i] = si;
+                            root[j] = sj;
+                            roots.push(root);
+                        }
+                    }
+                }
+            }
+            return roots.slice(0, 240);
+        }
+        
+        const e8Roots = generateE8Roots();
+        
+        // Particle
+        class MysticalParticle {
+            constructor(x, y, z, index) {
+                this.x = x;
+                this.y = y;
+                this.z = z;
+                this.vx = (Math.random() - 0.5) * 2;
+                this.vy = (Math.random() - 0.5) * 2;
+                this.vz = (Math.random() - 0.5) * 2;
+                this.radius = 2;
+                this.opacity = 1;
+                this.phase = Math.random() * Math.PI * 2;
+                this.index = index;
+                this.hue = Math.random() * 360;
+            }
+            
+            update(mode, params) {
+                this.phase += 0.05;
+                
+                let target;
+                const centerX = canvas.width / 2;
+                const centerY = canvas.height / 2;
+                
+                if (mode === 'hydra') {
+                    target = SacredGeometry.lemniscate(this.phase * 0.5 + params.algebraPhase, 200);
+                } else if (mode === 'calceJack') {
+                    target = SacredGeometry.sinusoidalSpiral(this.phase + params.algebraPhase, params.algebraPhase, params.hyperFactor + 1);
+                } else if (mode === 'kite') {
+                    target = SacredGeometry.mirrorHall(this.phase * 0.7, params.algebraPhase);
+                } else if (mode === 'e8') {
+                    target = SacredGeometry.e8Point(this.index, params.algebraPhase, e8Roots);
+                } else {
+                    const t1 = SacredGeometry.lemniscate(this.phase * 0.3, 100);
+                    const t2 = SacredGeometry.sinusoidalSpiral(this.phase * 0.5, params.algebraPhase, 2);
+                    const t3 = SacredGeometry.e8Point(this.index, params.algebraPhase, e8Roots);
+                    target = {
+                        x: (t1.x + t2.x + t3.x) / 3,
+                        y: (t1.y + t2.y + t3.y) / 3,
+                        z: (t1.z + t2.z + t3.z) / 3
+                    };
+                }
+                
+                const targetX = centerX + target.x;
+                const targetY = centerY + target.y;
+                const targetZ = target.z;
+                
+                const attraction = 0.005 * (1 + params.hyperFactor);
+                this.vx += (targetX - this.x) * attraction;
+                this.vy += (targetY - this.y) * attraction;
+                this.vz += (targetZ - this.z) * attraction;
+                
+                if (params.nonAssoc > 0) {
+                    this.vx += (Math.random() - 0.5) * params.nonAssoc * 2;
+                    this.vy += (Math.random() - 0.5) * params.nonAssoc * 2;
+                    this.vz += (Math.random() - 0.5) * params.nonAssoc * 2;
+                }
+                
+                this.x += this.vx;
+                this.y += this.vy;
+                this.z += this.vz;
+                
+                this.vx *= 0.95;
+                this.vy *= 0.95;
+                this.vz *= 0.95;
+                
+                this.hue = (this.hue + 0.5) % 360;
+            }
+            
+            project(projectionMode, eyeOffset = 0) {
+                const centerX = canvas.width / 2;
+                const centerY = canvas.height / 2;
+                const x = this.x - centerX + eyeOffset;
+                const y = this.y - centerY;
+                const z = this.z;
+                
+                let projX, projY, scale;
+                
+                if (projectionMode === 'perspective') {
+                    const fov = 1000;
+                    const distance = Math.max(fov + z, 100);
+                    scale = fov / distance;
+                    projX = x * scale + centerX;
+                    projY = y * scale + centerY;
+                } else if (projectionMode === 'stereographic') {
+                    const r = Math.sqrt(x * x + y * y + z * z);
+                    if (r > 0) {
+                        const factor = 500 / (500 + z);
+                        projX = x * factor + centerX;
+                        projY = y * factor + centerY;
+                        scale = factor;
+                    } else {
+                        projX = centerX;
+                        projY = centerY;
+                        scale = 1;
+                    }
+                } else {
+                    scale = 1;
+                    projX = this.x + eyeOffset;
+                    projY = this.y;
+                }
+                
+                return { x: projX, y: projY, scale, z };
+            }
+            
+            draw(renderCtx, projectionMode, eyeOffset = 0) {
+                const proj = this.project(projectionMode, eyeOffset);
+                const depthOpacity = projectionMode !== 'orthographic' ? 
+                    Math.max(0.2, Math.min(1, (proj.z + 400) / 800)) : 1;
+                
+                renderCtx.save();
+                renderCtx.globalAlpha = this.opacity * depthOpacity;
+                
+                const gradient = renderCtx.createRadialGradient(
+                    proj.x, proj.y, 0,
+                    proj.x, proj.y, this.radius * proj.scale * 3
+                );
+                gradient.addColorStop(0, `hsla(${this.hue}, 100%, 70%, 1)`);
+                gradient.addColorStop(0.5, `hsla(${this.hue + 30}, 100%, 50%, 0.6)`);
+                gradient.addColorStop(1, `hsla(${this.hue + 60}, 100%, 30%, 0)`);
+                
+                renderCtx.fillStyle = gradient;
+                renderCtx.beginPath();
+                renderCtx.arc(proj.x, proj.y, this.radius * proj.scale * 3, 0, Math.PI * 2);
+                renderCtx.fill();
+                
+                renderCtx.restore();
+            }
+        }
+        
+        function renderStereo() {
+            if (stereoMode === 'none') {
+                particles.forEach(p => p.draw(ctx, projectionMode, 0));
+            } else if (stereoMode === 'anaglyph') {
+                const offset = eyeSeparation / 10;
+                
+                const tempCanvas = document.createElement('canvas');
+                tempCanvas.width = canvas.width;
+                tempCanvas.height = canvas.height;
+                const tempCtx = tempCanvas.getContext('2d');
+                
+                particles.forEach(p => p.draw(tempCtx, projectionMode, -offset));
+                tempCtx.globalCompositeOperation = 'multiply';
+                tempCtx.fillStyle = '#ff0000';
+                tempCtx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                ctx.globalCompositeOperation = 'screen';
+                ctx.drawImage(tempCanvas, 0, 0);
+                
+                tempCtx.clearRect(0, 0, canvas.width, canvas.height);
+                tempCtx.globalCompositeOperation = 'source-over';
+                particles.forEach(p => p.draw(tempCtx, projectionMode, offset));
+                tempCtx.globalCompositeOperation = 'multiply';
+                tempCtx.fillStyle = '#00ffff';
+                tempCtx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                ctx.drawImage(tempCanvas, 0, 0);
+                ctx.globalCompositeOperation = 'source-over';
+                
+            } else if (stereoMode === 'side-by-side') {
+                const halfWidth = canvas.width / 2;
+                const offset = eyeSeparation / 10;
+                
+                ctx.save();
+                ctx.beginPath();
+                ctx.rect(0, 0, halfWidth, canvas.height);
+                ctx.clip();
+                particles.forEach(p => p.draw(ctx, projectionMode, -offset));
+                ctx.restore();
+                
+                ctx.save();
+                ctx.beginPath();
+                ctx.rect(halfWidth, 0, halfWidth, canvas.height);
+                ctx.clip();
+                particles.forEach(p => p.draw(ctx, projectionMode, offset));
+                ctx.restore();
+                
+                ctx.strokeStyle = 'rgba(0, 255, 136, 0.3)';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.moveTo(halfWidth, 0);
+                ctx.lineTo(halfWidth, canvas.height);
+                ctx.stroke();
+            }
+        }
+        
+        // System State
+        let particles = [];
+        let geometryMode = 'hydra';
+        let projectionMode = 'orthographic';
+        let stereoMode = 'none';
+        let eyeSeparation = 65;
+        let algebraPhase = 0;
+        let nonAssoc = 0;
+        let hyperFactor = 1;
+        let autoRotateEnabled = false;
+        let lastTime = 0;
+        let fps = 60;
+        let fullscreenMode = false;
+        
+        function initParticles(count) {
+            particles = [];
+            for (let i = 0; i < count; i++) {
+                particles.push(new MysticalParticle(
+                    Math.random() * canvas.width,
+                    Math.random() * canvas.height,
+                    (Math.random() - 0.5) * 400,
+                    i
+                ));
+            }
+        }
+        
+        function animate(currentTime) {
+            const deltaTime = currentTime - lastTime;
+            fps = Math.round(1000 / Math.max(deltaTime, 1));
+            lastTime = currentTime;
+            
+            if (autoRotateEnabled) {
+                algebraPhase = (algebraPhase + 0.02) % (Math.PI * 2);
+                document.getElementById('algebraPhase').value = algebraPhase;
+                document.getElementById('phaseLabel').textContent = algebraPhase.toFixed(2);
+            }
+            
+            ctx.fillStyle = 'rgba(10, 10, 10, 0.1)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            particles.sort((a, b) => b.z - a.z);
+            
+            const params = { algebraPhase, nonAssoc, hyperFactor };
+            particles.forEach(p => p.update(geometryMode, params));
+            
+            renderStereo();
+            
+            document.getElementById('fps').textContent = fps;
+            document.getElementById('activeParticles').textContent = particles.length;
+            
+            requestAnimationFrame(animate);
+        }
+        
+        // Controls
+        const controls = document.getElementById('controls');
+        const stats = document.getElementById('stats');
+        const toggleButton = document.getElementById('toggleMenu');
+        const fullscreenToggle = document.getElementById('fullscreenToggle');
+        const helpOverlay = document.getElementById('helpOverlay');
+        let menuVisible = true;
+        
+        fullscreenToggle.addEventListener('click', () => {
+            fullscreenMode = !fullscreenMode;
+            
+            if (fullscreenMode) {
+                controls.classList.add('hidden');
+                stats.classList.add('hidden');
+                toggleButton.classList.add('hidden');
+                fullscreenToggle.textContent = '🔙';
+                helpOverlay.classList.remove('visible');
+            } else {
+                if (menuVisible) {
+                    controls.classList.remove('hidden');
+                }
+                stats.classList.remove('hidden');
+                toggleButton.classList.remove('hidden');
+                fullscreenToggle.textContent = '👁️';
+            }
+        });
+        
+        toggleButton.addEventListener('click', () => {
+            if (fullscreenMode) return;
+            menuVisible = !menuVisible;
+            controls.classList.toggle('hidden', !menuVisible);
+            toggleButton.textContent = menuVisible ? '☰' : '→';
+            toggleButton.style.left = menuVisible ? '370px' : '20px';
+        });
+        
+        document.getElementById('geometryMode').addEventListener('change', (e) => {
+            geometryMode = e.target.value;
+            const modes = {
+                'hydra': 'Hydra',
+                'kite': 'Kite',
+                'calceJack': 'Calce',
+                'e8': 'E8',
+                'unified': 'Unified'
+            };
+            document.getElementById('geomDisplay').textContent = modes[geometryMode];
+            
+            const messages = {
+                'hydra': '🌀 Hydra: To See a World in a Grain of Sand',
+                'kite': '🪞 Mirror Hall: Hold ∞ in the Palm of Your Hand',
+                'calceJack': '🌊 Sinusoidal Spiral: Hyperbola/Parabola Arc',
+                'e8': '⚛️ E8 Lattice: 248-Dimensional Symmetry',
+                'unified': '🔮 Unified Field: All Geometries as One'
+            };
+            document.getElementById('indicator').textContent = messages[geometryMode];
+        });
+        
+        document.getElementById('audioMode').addEventListener('change', (e) => {
+            const mode = e.target.value;
+            if (mode === 'off') {
+                audioSystem.stop();
+                document.getElementById('audioStatus').textContent = 'Off';
+                document.getElementById('currentFreq').textContent = '--';
+            } else {
+                audioSystem.start(mode);
+                const freq = mode === '528' ? '528 Hz' : mode === 'golden' ? `φ ${PHI.toFixed(3)} Hz` : 'Solfeggio';
+                document.getElementById('currentFreq').textContent = freq;
+                document.getElementById('audioStatus').textContent = 'Playing';
+            }
+        });
+        
+        document.getElementById('volume').addEventListener('input', (e) => {
+            const vol = parseInt(e.target.value) / 100;
+            audioSystem.setVolume(vol);
+            document.getElementById('volumeLabel').textContent = e.target.value + '%';
+        });
+        
+        document.getElementById('projection').addEventListener('change', (e) => {
+            projectionMode = e.target.value;
+        });
+        
+        document.getElementById('stereoMode').addEventListener('change', (e) => {
+            stereoMode = e.target.value;
+            const names = { 'none': '2D', 'anaglyph': 'Anaglyph', 'side-by-side': 'SBS' };
+            document.getElementById('stereoDisplay').textContent = names[stereoMode];
+        });
+        
+        document.getElementById('eyeSeparation').addEventListener('input', (e) => {
+            eyeSeparation = parseInt(e.target.value);
+            document.getElementById('eyeSepLabel').textContent = eyeSeparation + 'mm';
+        });
+        
+        document.getElementById('particleCount').addEventListener('input', (e) => {
+            const count = parseInt(e.target.value);
+            document.getElementById('particleCountLabel').textContent = count;
+            initParticles(count);
+        });
+        
+        document.getElementById('hyperFactor').addEventListener('input', (e) => {
+            hyperFactor = parseFloat(e.target.value);
+            document.getElementById('hyperLabel').textContent = hyperFactor.toFixed(1);
+        });
+        
+        document.getElementById('algebraPhase').addEventListener('input', (e) => {
+            algebraPhase = parseFloat(e.target.value);
+            document.getElementById('phaseLabel').textContent = algebraPhase.toFixed(2);
+        });
+        
+        document.getElementById('nonAssoc').addEventListener('input', (e) => {
+            nonAssoc = parseFloat(e.target.value);
+            document.getElementById('nonAssocLabel').textContent = nonAssoc.toFixed(2);
+        });
+        
+        document.getElementById('collapse').addEventListener('click', () => {
+            particles.forEach(p => {
+                p.vx = (Math.random() - 0.5) * 20;
+                p.vy = (Math.random() - 0.5) * 20;
+                p.vz = (Math.random() - 0.5) * 20;
+            });
+        });
+        
+        document.getElementById('reset').addEventListener('click', () => {
+            algebraPhase = 0;
+            nonAssoc = 0;
+            hyperFactor = 1;
+            autoRotateEnabled = false;
+            eyeSeparation = 65;
+            
+            document.getElementById('algebraPhase').value = 0;
+            document.getElementById('nonAssoc').value = 0;
+            document.getElementById('hyperFactor').value = 1;
+            document.getElementById('eyeSeparation').value = 65;
+            document.getElementById('phaseLabel').textContent = '0.0';
+            document.getElementById('nonAssocLabel').textContent = '0.0';
+            document.getElementById('hyperLabel').textContent = '1.0';
+            document.getElementById('eyeSepLabel').textContent = '65mm';
+            document.getElementById('autoRotate').textContent = 'Auto Spiral';
+            
+            initParticles(particles.length);
+        });
+        
+        document.getElementById('autoRotate').addEventListener('click', (e) => {
+            autoRotateEnabled = !autoRotateEnabled;
+            e.target.textContent = autoRotateEnabled ? 'Stop' : 'Auto Spiral';
+        });
+        
+        document.getElementById('colorScheme').addEventListener('click', () => {
+            particles.forEach(p => {
+                p.hue = Math.random() * 360;
+            });
+        });
+        
+        function createParticleBurst(x, y) {
+            const burstCount = 20;
+            for (let i = 0; i < burstCount; i++) {
+                const angle = (Math.PI * 2 * i) / burstCount;
+                const speed = 5 + Math.random() * 5;
+                const particle = new MysticalParticle(x, y, 0, particles.length);
+                
+                particle.vx = Math.cos(angle) * speed;
+                particle.vy = Math.sin(angle) * speed;
+                particle.vz = (Math.random() - 0.5) * speed * 2;
+                particle.hue = (angle / (Math.PI * 2)) * 360;
+                
+                particles.push(particle);
+            }
+            
+            if (particles.length > 2000) {
+                particles = particles.slice(-2000);
+            }
+        }
+        
+        canvas.addEventListener('click', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            createParticleBurst(e.clientX - rect.left, e.clientY - rect.top);
+        });
+        
+        canvas.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            if (e.touches.length === 1) {
+                const rect = canvas.getBoundingClientRect();
+                createParticleBurst(
+                    e.touches[0].clientX - rect.left,
+                    e.touches[0].clientY - rect.top
+                );
+            }
+        }, { passive: false });
+        
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'f' || e.key === 'F') {
+                fullscreenToggle.click();
+            } else if (e.key === 'h' || e.key === 'H') {
+                helpOverlay.classList.toggle('visible');
+            } else if (e.key === 'Tab') {
+                e.preventDefault();
+                toggleButton.click();
+            } else if (e.key === ' ') {
+                e.preventDefault();
+                document.getElementById('autoRotate').click();
+            } else if (e.key === 'r' || e.key === 'R') {
+                document.getElementById('reset').click();
+            } else if (e.key === 'c' || e.key === 'C') {
+                document.getElementById('colorScheme').click();
+            } else if (e.key === '1') {
+                document.getElementById('geometryMode').value = 'hydra';
+                document.getElementById('geometryMode').dispatchEvent(new Event('change'));
+            } else if (e.key === '2') {
+                document.getElementById('geometryMode').value = 'calceJack';
+                document.getElementById('geometryMode').dispatchEvent(new Event('change'));
+            } else if (e.key === '3') {
+                document.getElementById('geometryMode').value = 'kite';
+                document.getElementById('geometryMode').dispatchEvent(new Event('change'));
+            } else if (e.key === '4') {
+                document.getElementById('geometryMode').value = 'e8';
+                document.getElementById('geometryMode').dispatchEvent(new Event('change'));
+            } else if (e.key === '5') {
+                document.getElementById('geometryMode').value = 'unified';
+                document.getElementById('geometryMode').dispatchEvent(new Event('change'));
+            }
+        });
+        
+        initParticles(800);
+        animate(0);
+    </script>
+</body>
+</html>
