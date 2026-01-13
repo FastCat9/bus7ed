@@ -1,945 +1,807 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Unified Quantum-Mystical System</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            background: #0a0a0a;
-            color: #fff;
-            overflow: hidden;
-            touch-action: none;
-        }
-        
-        #canvas {
-            display: block;
-            cursor: crosshair;
-        }
-        
-        .controls {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            background: rgba(0, 0, 0, 0.95);
-            backdrop-filter: blur(20px);
-            padding: 25px;
-            border-radius: 16px;
-            border: 1px solid rgba(0, 255, 136, 0.3);
-            max-width: 340px;
-            transform: translateX(0);
-            transition: transform 0.4s ease, opacity 0.4s ease;
-            box-shadow: 0 8px 32px rgba(0, 255, 136, 0.2);
-            max-height: 85vh;
-            overflow-y: auto;
-            z-index: 100;
-        }
-        
-        .controls.hidden {
-            transform: translateX(-110%);
-            opacity: 0;
-            pointer-events: none;
-        }
-        
-        .controls h2 {
-            margin-bottom: 20px;
-            font-size: 20px;
-            color: #00ff88;
-            text-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
-        }
-        
-        .control-group {
-            margin-bottom: 18px;
-        }
-        
-        label {
-            display: block;
-            margin-bottom: 8px;
-            font-size: 12px;
-            text-transform: uppercase;
-            letter-spacing: 0.8px;
-            opacity: 0.9;
-            color: #00ffaa;
-        }
-        
-        select, input[type="range"] {
-            width: 100%;
-            padding: 10px;
-            background: rgba(255, 255, 255, 0.12);
-            border: 1px solid rgba(255, 255, 255, 0.25);
-            border-radius: 8px;
-            color: #fff;
-            font-size: 14px;
-            transition: border-color 0.3s ease;
-        }
-        
-        select:focus, input[type="range"]:focus {
-            outline: none;
-            border-color: #00ff88;
-        }
-        
-        input[type="range"] {
-            padding: 6px 0;
-        }
-        
-        .button-group {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin-top: 20px;
-        }
-        
-        button {
-            padding: 12px;
-            background: linear-gradient(135deg, #00ff88, #0088ff);
-            border: none;
-            border-radius: 8px;
-            color: #000;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-transform: uppercase;
-            font-size: 10px;
-            letter-spacing: 0.5px;
-        }
-        
-        button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(0, 255, 136, 0.3);
-        }
-        
-        .toggle-menu {
-            position: absolute;
-            top: 20px;
-            left: 370px;
-            background: rgba(0, 255, 136, 0.9);
-            border: none;
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            color: #000;
-            font-size: 20px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            z-index: 1000;
-        }
-        
-        .toggle-menu:hover {
-            transform: scale(1.1) rotate(90deg);
-        }
-        
-        .toggle-menu.hidden {
-            opacity: 0;
-            pointer-events: none;
-        }
-        
-        .stats {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background: rgba(0, 0, 0, 0.95);
-            backdrop-filter: blur(15px);
-            padding: 20px;
-            border-radius: 12px;
-            font-size: 11px;
-            font-family: 'Courier New', monospace;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            transition: opacity 0.4s ease, transform 0.4s ease;
-            z-index: 100;
-        }
-        
-        .stats.hidden {
-            opacity: 0;
-            transform: translateY(-20px);
-            pointer-events: none;
-        }
-        
-        .quantum-indicator {
-            margin-top: 15px;
-            padding: 12px;
-            background: rgba(0, 255, 136, 0.15);
-            border-radius: 8px;
-            font-size: 11px;
-            text-align: center;
-            border: 1px solid rgba(0, 255, 136, 0.3);
-            animation: pulse 2s infinite;
-        }
-        
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.7; }
-        }
-        
-        .fullscreen-toggle {
-            position: absolute;
-            bottom: 20px;
-            right: 20px;
-            background: rgba(0, 255, 136, 0.9);
-            border: none;
-            border-radius: 50%;
-            width: 60px;
-            height: 60px;
-            color: #000;
-            font-size: 24px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            z-index: 1000;
-        }
-        
-        .fullscreen-toggle:hover {
-            transform: scale(1.1);
-        }
-        
-        .help-overlay {
-            position: absolute;
-            bottom: 90px;
-            right: 20px;
-            background: rgba(0, 0, 0, 0.95);
-            backdrop-filter: blur(15px);
-            padding: 15px;
-            border-radius: 12px;
-            font-size: 10px;
-            border: 1px solid rgba(0, 255, 136, 0.3);
-            opacity: 0;
-            transform: translateY(20px);
-            transition: opacity 0.3s ease, transform 0.3s ease;
-            pointer-events: none;
-            z-index: 99;
-        }
-        
-        .help-overlay.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-        
-        .help-overlay div {
-            margin: 5px 0;
-            color: #00ff88;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>∞ Through The Looking Glass ∞</title>
+<style>
+* {
+margin: 0;
+padding: 0;
+box-sizing: border-box;
+}
+
+```
+body {
+background: linear-gradient(135deg, #0a0a0a 0%, #1a0033 50%, #000a1a 100%);
+color: #00ffff;
+font-family: 'Courier New', monospace;
+overflow-x: hidden;
+min-height: 100vh;
+display: flex;
+flex-direction: column;
+align-items: center;
+padding: 20px;
+}
+
+.container {
+max-width: 900px;
+width: 100%;
+}
+
+h1 {
+text-align: center;
+font-size: 2rem;
+margin: 20px 0;
+text-shadow: 0 0 20px #ff00ff, 0 0 40px #00ffff;
+animation: pulse 3s ease-in-out infinite;
+}
+
+@keyframes pulse {
+0%, 100% { opacity: 1; transform: scale(1); }
+50% { opacity: 0.8; transform: scale(1.02); }
+}
+
+.canvas-container {
+position: relative;
+width: 100%;
+height: 500px;
+border: 2px solid #ff00ff;
+border-radius: 10px;
+margin: 20px 0;
+box-shadow: 0 0 30px rgba(255, 0, 255, 0.5), inset 0 0 30px rgba(0, 255, 255, 0.2);
+overflow: hidden;
+background: radial-gradient(circle at center, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.95) 100%);
+}
+
+canvas {
+display: block;
+width: 100%;
+height: 100%;
+}
+
+.carroll-quote {
+position: absolute;
+top: 50%;
+left: 50%;
+transform: translate(-50%, -50%);
+color: rgba(255, 0, 255, 0.4);
+font-size: 1.2rem;
+font-style: italic;
+text-align: center;
+pointer-events: none;
+animation: fadeInOut 8s ease-in-out infinite;
+text-shadow: 0 0 10px rgba(255, 0, 255, 0.6);
+max-width: 80%;
+}
+
+@keyframes fadeInOut {
+0%, 100% { opacity: 0; }
+50% { opacity: 0.6; }
+}
+
+.controls {
+background: rgba(26, 0, 51, 0.8);
+border: 1px solid #ff00ff;
+border-radius: 10px;
+padding: 20px;
+margin: 20px 0;
+box-shadow: 0 0 20px rgba(255, 0, 255, 0.3);
+}
+
+.control-group {
+margin: 15px 0;
+}
+
+label {
+display: block;
+margin-bottom: 8px;
+color: #00ffff;
+font-size: 0.9rem;
+}
+
+.frequency-buttons {
+display: grid;
+grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+gap: 10px;
+margin: 15px 0;
+}
+
+button {
+background: linear-gradient(135deg, #1a0033 0%, #33006d 100%);
+border: 2px solid #ff00ff;
+color: #00ffff;
+padding: 12px 20px;
+border-radius: 5px;
+cursor: pointer;
+font-family: 'Courier New', monospace;
+font-size: 0.9rem;
+transition: all 0.3s ease;
+text-shadow: 0 0 5px #00ffff;
+}
+
+button:hover {
+background: linear-gradient(135deg, #33006d 0%, #5500aa 100%);
+box-shadow: 0 0 15px rgba(255, 0, 255, 0.6);
+transform: translateY(-2px);
+}
+
+button.active {
+background: linear-gradient(135deg, #5500aa 0%, #8800ff 100%);
+box-shadow: 0 0 20px rgba(255, 0, 255, 0.8);
+}
+
+.play-button {
+width: 100%;
+font-size: 1.2rem;
+padding: 15px;
+margin: 20px 0;
+background: linear-gradient(135deg, #ff00ff 0%, #8800ff 100%);
+}
+
+.play-button.playing {
+background: linear-gradient(135deg, #00ffff 0%, #0088ff 100%);
+}
+
+input[type="range"] {
+width: 100%;
+height: 6px;
+border-radius: 3px;
+background: linear-gradient(to right, #1a0033, #ff00ff);
+outline: none;
+-webkit-appearance: none;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+-webkit-appearance: none;
+appearance: none;
+width: 20px;
+height: 20px;
+border-radius: 50%;
+background: #00ffff;
+cursor: pointer;
+box-shadow: 0 0 10px #00ffff;
+}
+
+input[type="range"]::-moz-range-thumb {
+width: 20px;
+height: 20px;
+border-radius: 50%;
+background: #00ffff;
+cursor: pointer;
+box-shadow: 0 0 10px #00ffff;
+border: none;
+}
+
+.geometry-mode {
+display: flex;
+gap: 10px;
+flex-wrap: wrap;
+}
+
+.info {
+background: rgba(0, 255, 255, 0.1);
+border: 1px solid #00ffff;
+border-radius: 5px;
+padding: 15px;
+margin: 20px 0;
+font-size: 0.85rem;
+line-height: 1.6;
+}
+
+.frequency-display {
+text-align: center;
+font-size: 1.5rem;
+color: #ff00ff;
+text-shadow: 0 0 10px #ff00ff;
+margin: 10px 0;
+}
+
+.quote {
+text-align: center;
+font-style: italic;
+color: #8800ff;
+margin: 20px 0;
+font-size: 0.9rem;
+opacity: 0.8;
+}
+</style>
+```
+
 </head>
 <body>
-    <canvas id="canvas"></canvas>
-    
-    <button class="toggle-menu" id="toggleMenu">☰</button>
-    
-    <div class="controls" id="controls">
-        <h2>🔮 Mystical Algebra System</h2>
-        
-        <div class="control-group">
-            <label>🎭 Sacred Geometry Mode</label>
-            <select id="geometryMode">
-                <option value="hydra">Hydra (Lemniscate)</option>
-                <option value="kite">Kite (Mirror Hall)</option>
-                <option value="calceJack">Calce Jack (Spiral)</option>
-                <option value="e8">E8 Lattice</option>
-                <option value="unified">Unified Field</option>
-            </select>
-        </div>
-        
-        <div class="control-group">
-            <label>🎵 Solfeggio Audio</label>
-            <select id="audioMode">
-                <option value="off">Audio Off</option>
-                <option value="solfeggio">Solfeggio Frequencies</option>
-                <option value="golden">Golden Ratio φ</option>
-                <option value="528">528 Hz DNA Repair</option>
-            </select>
-        </div>
-        
-        <div class="control-group">
-            <label>Frequency: <span id="currentFreq">--</span></label>
-            <label>Volume: <span id="volumeLabel">50%</span></label>
-            <input type="range" id="volume" min="0" max="100" value="50">
-        </div>
-        
-        <div class="control-group">
-            <label>📐 Projection Type</label>
-            <select id="projection">
-                <option value="orthographic">Orthographic</option>
-                <option value="perspective">Perspective</option>
-                <option value="stereographic">Stereographic</option>
-            </select>
-        </div>
-        
-        <div class="control-group">
-            <label>🎭 3D Stereoscopic</label>
-            <select id="stereoMode">
-                <option value="none">None (2D)</option>
-                <option value="anaglyph">Anaglyph</option>
-                <option value="side-by-side">Side-by-Side VR</option>
-            </select>
-        </div>
-        
-        <div class="control-group">
-            <label>Eye Sep: <span id="eyeSepLabel">65mm</span></label>
-            <input type="range" id="eyeSeparation" min="0" max="150" value="65">
-        </div>
-        
-        <div class="control-group">
-            <label>Particles: <span id="particleCountLabel">800</span></label>
-            <input type="range" id="particleCount" min="200" max="2000" value="800" step="100">
-        </div>
-        
-        <div class="control-group">
-            <label>Hyperbola: <span id="hyperLabel">1.0</span></label>
-            <input type="range" id="hyperFactor" min="0" max="3" value="1" step="0.1">
-        </div>
-        
-        <div class="control-group">
-            <label>Phase φ: <span id="phaseLabel">0.0</span></label>
-            <input type="range" id="algebraPhase" min="0" max="6.28" value="0" step="0.01">
-        </div>
-        
-        <div class="control-group">
-            <label>Non-Assoc: <span id="nonAssocLabel">0.0</span></label>
-            <input type="range" id="nonAssoc" min="0" max="1" value="0" step="0.01">
-        </div>
-        
-        <div class="button-group">
-            <button id="collapse">Collapse</button>
-            <button id="reset">Reset</button>
-            <button id="autoRotate">Auto Spiral</button>
-            <button id="colorScheme">Transmute</button>
-        </div>
-        
-        <div class="quantum-indicator" id="indicator">
-            🌀 Hydra Mode: Infinity in a Grain of Sand
-        </div>
-    </div>
-    
-    <div class="stats" id="stats">
-        <div>FPS: <span id="fps">60</span></div>
-        <div>Particles: <span id="activeParticles">0</span></div>
-        <div>Geometry: <span id="geomDisplay">Hydra</span></div>
-        <div>3D: <span id="stereoDisplay">2D</span></div>
-        <div>Audio: <span id="audioStatus">Off</span></div>
-    </div>
-    
-    <button class="fullscreen-toggle" id="fullscreenToggle">👁️</button>
-    
-    <div class="help-overlay" id="helpOverlay">
-        <div><strong>Keyboard Shortcuts:</strong></div>
-        <div>F - Fullscreen View</div>
-        <div>Tab - Toggle Menu</div>
-        <div>Space - Auto Rotate</div>
-        <div>1-5 - Geometry Modes</div>
-        <div>C - Randomize Colors</div>
-        <div>R - Reset</div>
-        <div>H - Toggle Help</div>
-    </div>
-    
-    <script>
-        const canvas = document.getElementById('canvas');
-        const ctx = canvas.getContext('2d');
-        const PHI = 1.618033988749895;
-        
-        function resizeCanvas() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        }
-        resizeCanvas();
-        window.addEventListener('resize', resizeCanvas);
-        
-        // Audio System
-        class BinauralAudioSystem {
-            constructor() {
-                this.audioContext = null;
-                this.leftOsc = null;
-                this.rightOsc = null;
-                this.leftGain = null;
-                this.rightGain = null;
-                this.merger = null;
-                this.isPlaying = false;
-                this.currentFreq = 0;
-                this.solfeggioFreqs = [174, 285, 396, 417, 528, 639, 741, 852];
-            }
-            
-            init() {
-                if (!this.audioContext) {
-                    this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                    this.merger = this.audioContext.createChannelMerger(2);
-                    
-                    this.leftOsc = this.audioContext.createOscillator();
-                    this.leftGain = this.audioContext.createGain();
-                    this.leftOsc.connect(this.leftGain);
-                    this.leftGain.connect(this.merger, 0, 0);
-                    
-                    this.rightOsc = this.audioContext.createOscillator();
-                    this.rightGain = this.audioContext.createGain();
-                    this.rightOsc.connect(this.rightGain);
-                    this.rightGain.connect(this.merger, 0, 1);
-                    
-                    this.merger.connect(this.audioContext.destination);
-                    
-                    this.leftOsc.type = 'sine';
-                    this.rightOsc.type = 'sine';
-                    this.leftOsc.start();
-                    this.rightOsc.start();
-                }
-            }
-            
-            setFrequency(baseFreq, mode = 'golden') {
-                if (!this.audioContext) return;
-                this.currentFreq = baseFreq;
-                this.leftOsc.frequency.setValueAtTime(baseFreq, this.audioContext.currentTime);
-                const offset = mode === 'golden' ? PHI : 2;
-                this.rightOsc.frequency.setValueAtTime(baseFreq + offset, this.audioContext.currentTime);
-            }
-            
-            setVolume(vol) {
-                if (this.leftGain && this.rightGain) {
-                    this.leftGain.gain.setValueAtTime(vol, this.audioContext.currentTime);
-                    this.rightGain.gain.setValueAtTime(vol, this.audioContext.currentTime);
-                }
-            }
-            
-            start(mode) {
-                this.init();
-                this.isPlaying = true;
-                const freq = mode === '528' ? 528 : this.solfeggioFreqs[0];
-                this.setFrequency(freq, mode === 'golden' ? 'golden' : 'normal');
-            }
-            
-            stop() {
-                if (this.leftGain && this.rightGain) {
-                    this.leftGain.gain.setValueAtTime(0, this.audioContext.currentTime);
-                    this.rightGain.gain.setValueAtTime(0, this.audioContext.currentTime);
-                }
-                this.isPlaying = false;
-            }
-        }
-        
-        const audioSystem = new BinauralAudioSystem();
-        
-        // Sacred Geometry
-        class SacredGeometry {
-            static lemniscate(t, scale = 200) {
-                const a = scale;
-                const denom = 1 + Math.sin(t) * Math.sin(t);
-                return {
-                    x: (a * Math.cos(t)) / denom,
-                    y: (a * Math.sin(t) * Math.cos(t)) / denom,
-                    z: Math.sin(t * 2) * scale * 0.3
-                };
-            }
-            
-            static sinusoidalSpiral(t, phase, n = 2) {
-                const r = Math.cos(n * t / 2);
-                const theta = t + phase;
-                return {
-                    x: r * Math.cos(theta) * 200,
-                    y: r * Math.sin(theta) * 200,
-                    z: Math.sin(t * n) * 100
-                };
-            }
-            
-            static mirrorHall(t, phase) {
-                const x = Math.cos(t) + Math.cos(3 * t + phase);
-                const y = Math.sin(t) - Math.sin(3 * t + phase);
-                return {
-                    x: x * 150,
-                    y: y * 150,
-                    z: (Math.cos(2 * t) + Math.sin(4 * t)) * 80
-                };
-            }
-            
-            static e8Point(index, phase, roots) {
-                const root = roots[index % roots.length];
-                const phi = PHI;
-                const cos = Math.cos(phase);
-                const sin = Math.sin(phase);
-                
-                return {
-                    x: (root[0] + root[1] * phi) * cos * 50,
-                    y: (root[2] + root[3] / phi) * cos * 50,
-                    z: (root[4] + root[5] * phi) * sin * 50
-                };
-            }
-        }
-        
-        function generateE8Roots() {
-            const roots = [];
-            for (let i = 0; i < 8; i++) {
-                for (let j = i + 1; j < 8; j++) {
-                    for (let si = -1; si <= 1; si += 2) {
-                        for (let sj = -1; sj <= 1; sj += 2) {
-                            const root = new Array(8).fill(0);
-                            root[i] = si;
-                            root[j] = sj;
-                            roots.push(root);
-                        }
-                    }
-                }
-            }
-            return roots.slice(0, 240);
-        }
-        
-        const e8Roots = generateE8Roots();
-        
-        // Particle
-        class MysticalParticle {
-            constructor(x, y, z, index) {
-                this.x = x;
-                this.y = y;
-                this.z = z;
-                this.vx = (Math.random() - 0.5) * 2;
-                this.vy = (Math.random() - 0.5) * 2;
-                this.vz = (Math.random() - 0.5) * 2;
-                this.radius = 2;
-                this.opacity = 1;
-                this.phase = Math.random() * Math.PI * 2;
-                this.index = index;
-                this.hue = Math.random() * 360;
-            }
-            
-            update(mode, params) {
-                this.phase += 0.05;
-                
-                let target;
-                const centerX = canvas.width / 2;
-                const centerY = canvas.height / 2;
-                
-                if (mode === 'hydra') {
-                    target = SacredGeometry.lemniscate(this.phase * 0.5 + params.algebraPhase, 200);
-                } else if (mode === 'calceJack') {
-                    target = SacredGeometry.sinusoidalSpiral(this.phase + params.algebraPhase, params.algebraPhase, params.hyperFactor + 1);
-                } else if (mode === 'kite') {
-                    target = SacredGeometry.mirrorHall(this.phase * 0.7, params.algebraPhase);
-                } else if (mode === 'e8') {
-                    target = SacredGeometry.e8Point(this.index, params.algebraPhase, e8Roots);
-                } else {
-                    const t1 = SacredGeometry.lemniscate(this.phase * 0.3, 100);
-                    const t2 = SacredGeometry.sinusoidalSpiral(this.phase * 0.5, params.algebraPhase, 2);
-                    const t3 = SacredGeometry.e8Point(this.index, params.algebraPhase, e8Roots);
-                    target = {
-                        x: (t1.x + t2.x + t3.x) / 3,
-                        y: (t1.y + t2.y + t3.y) / 3,
-                        z: (t1.z + t2.z + t3.z) / 3
-                    };
-                }
-                
-                const targetX = centerX + target.x;
-                const targetY = centerY + target.y;
-                const targetZ = target.z;
-                
-                const attraction = 0.005 * (1 + params.hyperFactor);
-                this.vx += (targetX - this.x) * attraction;
-                this.vy += (targetY - this.y) * attraction;
-                this.vz += (targetZ - this.z) * attraction;
-                
-                if (params.nonAssoc > 0) {
-                    this.vx += (Math.random() - 0.5) * params.nonAssoc * 2;
-                    this.vy += (Math.random() - 0.5) * params.nonAssoc * 2;
-                    this.vz += (Math.random() - 0.5) * params.nonAssoc * 2;
-                }
-                
-                this.x += this.vx;
-                this.y += this.vy;
-                this.z += this.vz;
-                
-                this.vx *= 0.95;
-                this.vy *= 0.95;
-                this.vz *= 0.95;
-                
-                this.hue = (this.hue + 0.5) % 360;
-            }
-            
-            project(projectionMode, eyeOffset = 0) {
-                const centerX = canvas.width / 2;
-                const centerY = canvas.height / 2;
-                const x = this.x - centerX + eyeOffset;
-                const y = this.y - centerY;
-                const z = this.z;
-                
-                let projX, projY, scale;
-                
-                if (projectionMode === 'perspective') {
-                    const fov = 1000;
-                    const distance = Math.max(fov + z, 100);
-                    scale = fov / distance;
-                    projX = x * scale + centerX;
-                    projY = y * scale + centerY;
-                } else if (projectionMode === 'stereographic') {
-                    const r = Math.sqrt(x * x + y * y + z * z);
-                    if (r > 0) {
-                        const factor = 500 / (500 + z);
-                        projX = x * factor + centerX;
-                        projY = y * factor + centerY;
-                        scale = factor;
-                    } else {
-                        projX = centerX;
-                        projY = centerY;
-                        scale = 1;
-                    }
-                } else {
-                    scale = 1;
-                    projX = this.x + eyeOffset;
-                    projY = this.y;
-                }
-                
-                return { x: projX, y: projY, scale, z };
-            }
-            
-            draw(renderCtx, projectionMode, eyeOffset = 0) {
-                const proj = this.project(projectionMode, eyeOffset);
-                const depthOpacity = projectionMode !== 'orthographic' ? 
-                    Math.max(0.2, Math.min(1, (proj.z + 400) / 800)) : 1;
-                
-                renderCtx.save();
-                renderCtx.globalAlpha = this.opacity * depthOpacity;
-                
-                const gradient = renderCtx.createRadialGradient(
-                    proj.x, proj.y, 0,
-                    proj.x, proj.y, this.radius * proj.scale * 3
-                );
-                gradient.addColorStop(0, `hsla(${this.hue}, 100%, 70%, 1)`);
-                gradient.addColorStop(0.5, `hsla(${this.hue + 30}, 100%, 50%, 0.6)`);
-                gradient.addColorStop(1, `hsla(${this.hue + 60}, 100%, 30%, 0)`);
-                
-                renderCtx.fillStyle = gradient;
-                renderCtx.beginPath();
-                renderCtx.arc(proj.x, proj.y, this.radius * proj.scale * 3, 0, Math.PI * 2);
-                renderCtx.fill();
-                
-                renderCtx.restore();
-            }
-        }
-        
-        function renderStereo() {
-            if (stereoMode === 'none') {
-                particles.forEach(p => p.draw(ctx, projectionMode, 0));
-            } else if (stereoMode === 'anaglyph') {
-                const offset = eyeSeparation / 10;
-                
-                const tempCanvas = document.createElement('canvas');
-                tempCanvas.width = canvas.width;
-                tempCanvas.height = canvas.height;
-                const tempCtx = tempCanvas.getContext('2d');
-                
-                particles.forEach(p => p.draw(tempCtx, projectionMode, -offset));
-                tempCtx.globalCompositeOperation = 'multiply';
-                tempCtx.fillStyle = '#ff0000';
-                tempCtx.fillRect(0, 0, canvas.width, canvas.height);
-                
-                ctx.globalCompositeOperation = 'screen';
-                ctx.drawImage(tempCanvas, 0, 0);
-                
-                tempCtx.clearRect(0, 0, canvas.width, canvas.height);
-                tempCtx.globalCompositeOperation = 'source-over';
-                particles.forEach(p => p.draw(tempCtx, projectionMode, offset));
-                tempCtx.globalCompositeOperation = 'multiply';
-                tempCtx.fillStyle = '#00ffff';
-                tempCtx.fillRect(0, 0, canvas.width, canvas.height);
-                
-                ctx.drawImage(tempCanvas, 0, 0);
-                ctx.globalCompositeOperation = 'source-over';
-                
-            } else if (stereoMode === 'side-by-side') {
-                const halfWidth = canvas.width / 2;
-                const offset = eyeSeparation / 10;
-                
-                ctx.save();
-                ctx.beginPath();
-                ctx.rect(0, 0, halfWidth, canvas.height);
-                ctx.clip();
-                particles.forEach(p => p.draw(ctx, projectionMode, -offset));
-                ctx.restore();
-                
-                ctx.save();
-                ctx.beginPath();
-                ctx.rect(halfWidth, 0, halfWidth, canvas.height);
-                ctx.clip();
-                particles.forEach(p => p.draw(ctx, projectionMode, offset));
-                ctx.restore();
-                
-                ctx.strokeStyle = 'rgba(0, 255, 136, 0.3)';
-                ctx.lineWidth = 2;
-                ctx.beginPath();
-                ctx.moveTo(halfWidth, 0);
-                ctx.lineTo(halfWidth, canvas.height);
-                ctx.stroke();
-            }
-        }
-        
-        // System State
-        let particles = [];
-        let geometryMode = 'hydra';
-        let projectionMode = 'orthographic';
-        let stereoMode = 'none';
-        let eyeSeparation = 65;
-        let algebraPhase = 0;
-        let nonAssoc = 0;
-        let hyperFactor = 1;
-        let autoRotateEnabled = false;
-        let lastTime = 0;
-        let fps = 60;
-        let fullscreenMode = false;
-        
-        function initParticles(count) {
-            particles = [];
-            for (let i = 0; i < count; i++) {
-                particles.push(new MysticalParticle(
-                    Math.random() * canvas.width,
-                    Math.random() * canvas.height,
-                    (Math.random() - 0.5) * 400,
-                    i
-                ));
-            }
-        }
-        
-        function animate(currentTime) {
-            const deltaTime = currentTime - lastTime;
-            fps = Math.round(1000 / Math.max(deltaTime, 1));
-            lastTime = currentTime;
-            
-            if (autoRotateEnabled) {
-                algebraPhase = (algebraPhase + 0.02) % (Math.PI * 2);
-                document.getElementById('algebraPhase').value = algebraPhase;
-                document.getElementById('phaseLabel').textContent = algebraPhase.toFixed(2);
-            }
-            
-            ctx.fillStyle = 'rgba(10, 10, 10, 0.1)';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            
-            particles.sort((a, b) => b.z - a.z);
-            
-            const params = { algebraPhase, nonAssoc, hyperFactor };
-            particles.forEach(p => p.update(geometryMode, params));
-            
-            renderStereo();
-            
-            document.getElementById('fps').textContent = fps;
-            document.getElementById('activeParticles').textContent = particles.length;
-            
-            requestAnimationFrame(animate);
-        }
-        
-        // Controls
-        const controls = document.getElementById('controls');
-        const stats = document.getElementById('stats');
-        const toggleButton = document.getElementById('toggleMenu');
-        const fullscreenToggle = document.getElementById('fullscreenToggle');
-        const helpOverlay = document.getElementById('helpOverlay');
-        let menuVisible = true;
-        
-        fullscreenToggle.addEventListener('click', () => {
-            fullscreenMode = !fullscreenMode;
-            
-            if (fullscreenMode) {
-                controls.classList.add('hidden');
-                stats.classList.add('hidden');
-                toggleButton.classList.add('hidden');
-                fullscreenToggle.textContent = '🔙';
-                helpOverlay.classList.remove('visible');
-            } else {
-                if (menuVisible) {
-                    controls.classList.remove('hidden');
-                }
-                stats.classList.remove('hidden');
-                toggleButton.classList.remove('hidden');
-                fullscreenToggle.textContent = '👁️';
-            }
-        });
-        
-        toggleButton.addEventListener('click', () => {
-            if (fullscreenMode) return;
-            menuVisible = !menuVisible;
-            controls.classList.toggle('hidden', !menuVisible);
-            toggleButton.textContent = menuVisible ? '☰' : '→';
-            toggleButton.style.left = menuVisible ? '370px' : '20px';
-        });
-        
-        document.getElementById('geometryMode').addEventListener('change', (e) => {
-            geometryMode = e.target.value;
-            const modes = {
-                'hydra': 'Hydra',
-                'kite': 'Kite',
-                'calceJack': 'Calce',
-                'e8': 'E8',
-                'unified': 'Unified'
-            };
-            document.getElementById('geomDisplay').textContent = modes[geometryMode];
-            
-            const messages = {
-                'hydra': '🌀 Hydra: To See a World in a Grain of Sand',
-                'kite': '🪞 Mirror Hall: Hold ∞ in the Palm of Your Hand',
-                'calceJack': '🌊 Sinusoidal Spiral: Hyperbola/Parabola Arc',
-                'e8': '⚛️ E8 Lattice: 248-Dimensional Symmetry',
-                'unified': '🔮 Unified Field: All Geometries as One'
-            };
-            document.getElementById('indicator').textContent = messages[geometryMode];
-        });
-        
-        document.getElementById('audioMode').addEventListener('change', (e) => {
-            const mode = e.target.value;
-            if (mode === 'off') {
-                audioSystem.stop();
-                document.getElementById('audioStatus').textContent = 'Off';
-                document.getElementById('currentFreq').textContent = '--';
-            } else {
-                audioSystem.start(mode);
-                const freq = mode === '528' ? '528 Hz' : mode === 'golden' ? `φ ${PHI.toFixed(3)} Hz` : 'Solfeggio';
-                document.getElementById('currentFreq').textContent = freq;
-                document.getElementById('audioStatus').textContent = 'Playing';
-            }
-        });
-        
-        document.getElementById('volume').addEventListener('input', (e) => {
-            const vol = parseInt(e.target.value) / 100;
-            audioSystem.setVolume(vol);
-            document.getElementById('volumeLabel').textContent = e.target.value + '%';
-        });
-        
-        document.getElementById('projection').addEventListener('change', (e) => {
-            projectionMode = e.target.value;
-        });
-        
-        document.getElementById('stereoMode').addEventListener('change', (e) => {
-            stereoMode = e.target.value;
-            const names = { 'none': '2D', 'anaglyph': 'Anaglyph', 'side-by-side': 'SBS' };
-            document.getElementById('stereoDisplay').textContent = names[stereoMode];
-        });
-        
-        document.getElementById('eyeSeparation').addEventListener('input', (e) => {
-            eyeSeparation = parseInt(e.target.value);
-            document.getElementById('eyeSepLabel').textContent = eyeSeparation + 'mm';
-        });
-        
-        document.getElementById('particleCount').addEventListener('input', (e) => {
-            const count = parseInt(e.target.value);
-            document.getElementById('particleCountLabel').textContent = count;
-            initParticles(count);
-        });
-        
-        document.getElementById('hyperFactor').addEventListener('input', (e) => {
-            hyperFactor = parseFloat(e.target.value);
-            document.getElementById('hyperLabel').textContent = hyperFactor.toFixed(1);
-        });
-        
-        document.getElementById('algebraPhase').addEventListener('input', (e) => {
-            algebraPhase = parseFloat(e.target.value);
-            document.getElementById('phaseLabel').textContent = algebraPhase.toFixed(2);
-        });
-        
-        document.getElementById('nonAssoc').addEventListener('input', (e) => {
-            nonAssoc = parseFloat(e.target.value);
-            document.getElementById('nonAssocLabel').textContent = nonAssoc.toFixed(2);
-        });
-        
-        document.getElementById('collapse').addEventListener('click', () => {
-            particles.forEach(p => {
-                p.vx = (Math.random() - 0.5) * 20;
-                p.vy = (Math.random() - 0.5) * 20;
-                p.vz = (Math.random() - 0.5) * 20;
-            });
-        });
-        
-        document.getElementById('reset').addEventListener('click', () => {
-            algebraPhase = 0;
-            nonAssoc = 0;
-            hyperFactor = 1;
-            autoRotateEnabled = false;
-            eyeSeparation = 65;
-            
-            document.getElementById('algebraPhase').value = 0;
-            document.getElementById('nonAssoc').value = 0;
-            document.getElementById('hyperFactor').value = 1;
-            document.getElementById('eyeSeparation').value = 65;
-            document.getElementById('phaseLabel').textContent = '0.0';
-            document.getElementById('nonAssocLabel').textContent = '0.0';
-            document.getElementById('hyperLabel').textContent = '1.0';
-            document.getElementById('eyeSepLabel').textContent = '65mm';
-            document.getElementById('autoRotate').textContent = 'Auto Spiral';
-            
-            initParticles(particles.length);
-        });
-        
-        document.getElementById('autoRotate').addEventListener('click', (e) => {
-            autoRotateEnabled = !autoRotateEnabled;
-            e.target.textContent = autoRotateEnabled ? 'Stop' : 'Auto Spiral';
-        });
-        
-        document.getElementById('colorScheme').addEventListener('click', () => {
-            particles.forEach(p => {
-                p.hue = Math.random() * 360;
-            });
-        });
-        
-        function createParticleBurst(x, y) {
-            const burstCount = 20;
-            for (let i = 0; i < burstCount; i++) {
-                const angle = (Math.PI * 2 * i) / burstCount;
-                const speed = 5 + Math.random() * 5;
-                const particle = new MysticalParticle(x, y, 0, particles.length);
-                
-                particle.vx = Math.cos(angle) * speed;
-                particle.vy = Math.sin(angle) * speed;
-                particle.vz = (Math.random() - 0.5) * speed * 2;
-                particle.hue = (angle / (Math.PI * 2)) * 360;
-                
-                particles.push(particle);
-            }
-            
-            if (particles.length > 2000) {
-                particles = particles.slice(-2000);
-            }
-        }
-        
-        canvas.addEventListener('click', (e) => {
-            const rect = canvas.getBoundingClientRect();
-            createParticleBurst(e.clientX - rect.left, e.clientY - rect.top);
-        });
-        
-        canvas.addEventListener('touchstart', (e) => {
-            e.preventDefault();
-            if (e.touches.length === 1) {
-                const rect = canvas.getBoundingClientRect();
-                createParticleBurst(
-                    e.touches[0].clientX - rect.left,
-                    e.touches[0].clientY - rect.top
-                );
-            }
-        }, { passive: false });
-        
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'f' || e.key === 'F') {
-                fullscreenToggle.click();
-            } else if (e.key === 'h' || e.key === 'H') {
-                helpOverlay.classList.toggle('visible');
-            } else if (e.key === 'Tab') {
-                e.preventDefault();
-                toggleButton.click();
-            } else if (e.key === ' ') {
-                e.preventDefault();
-                document.getElementById('autoRotate').click();
-            } else if (e.key === 'r' || e.key === 'R') {
-                document.getElementById('reset').click();
-            } else if (e.key === 'c' || e.key === 'C') {
-                document.getElementById('colorScheme').click();
-            } else if (e.key === '1') {
-                document.getElementById('geometryMode').value = 'hydra';
-                document.getElementById('geometryMode').dispatchEvent(new Event('change'));
-            } else if (e.key === '2') {
-                document.getElementById('geometryMode').value = 'calceJack';
-                document.getElementById('geometryMode').dispatchEvent(new Event('change'));
-            } else if (e.key === '3') {
-                document.getElementById('geometryMode').value = 'kite';
-                document.getElementById('geometryMode').dispatchEvent(new Event('change'));
-            } else if (e.key === '4') {
-                document.getElementById('geometryMode').value = 'e8';
-                document.getElementById('geometryMode').dispatchEvent(new Event('change'));
-            } else if (e.key === '5') {
-                document.getElementById('geometryMode').value = 'unified';
-                document.getElementById('geometryMode').dispatchEvent(new Event('change'));
-            }
-        });
-        
-        initParticles(800);
-        animate(0);
-    </script>
+<div class="container">
+<h1>∞ THROUGH THE LOOKING GLASS ∞</h1>
+
+```
+<div class="quote">"Begin at the beginning, and go on till you come to the end: then stop."</div>
+
+<div class="canvas-container">
+<canvas id="geometryCanvas"></canvas>
+<div class="carroll-quote" id="carrollQuote"></div>
+</div>
+
+<div class="controls">
+<div class="frequency-display" id="freqDisplay">Select a frequency mode</div>
+
+<div class="control-group">
+<label>Binaural Frequency Mode:</label>
+<div class="frequency-buttons">
+<button class="freq-btn" data-mode="gamma">
+Gamma (40Hz)<br><small>Higher Consciousness</small>
+</button>
+<button class="freq-btn" data-mode="theta">
+Theta (6Hz)<br><small>Deep Meditation</small>
+</button>
+<button class="freq-btn" data-mode="dna">
+DNA Repair (528Hz)<br><small>Cellular Healing</small>
+</button>
+<button class="freq-btn" data-mode="schumann">
+Schumann (7.83Hz)<br><small>Earth Resonance</small>
+</button>
+</div>
+</div>
+
+<button class="play-button" id="playBtn">▶ DOWN THE RABBIT HOLE</button>
+
+<div class="control-group">
+<label>Volume: <span id="volumeDisplay">30%</span></label>
+<input type="range" id="volumeSlider" min="0" max="100" value="30">
+</div>
+
+<div class="control-group">
+<label>Geometry Visualization:</label>
+<div class="geometry-mode">
+<button class="geo-btn active" data-geo="wonderland">Wonderland</button>
+<button class="geo-btn" data-geo="looking-glass">Looking Glass</button>
+<button class="geo-btn" data-geo="cheshire">Cheshire</button>
+<button class="geo-btn" data-geo="rabbit-hole">Rabbit Hole</button>
+</div>
+</div>
+</div>
+
+<div class="info">
+<strong>How to use:</strong> Select a frequency mode, adjust volume, then press the button. Use headphones for binaural beats to work properly. Each frequency targets different brainwave states. The geometry uses quaternion mathematics to rotate through impossible dimensions.
+</div>
+
+<div class="quote">"We're all mad here. I'm mad. You're mad."</div>
+</div>
+
+<script>
+// Carroll quotes that cycle
+const carrollQuotes = [
+"Curiouser and curiouser...",
+"Why, sometimes I've believed as many as six impossible things before breakfast.",
+"If you don't know where you are going, any road will get you there.",
+"It's no use going back to yesterday, because I was a different person then.",
+"Imagination is the only weapon in the war against reality.",
+"We're all mad here."
+];
+let quoteIndex = 0;
+
+// Audio setup
+let audioContext = null;
+let osc1 = null;
+let osc2 = null;
+let gainNode = null;
+let isPlaying = false;
+let currentMode = 'gamma';
+let currentGeo = 'wonderland';
+
+const frequencies = {
+gamma: { base: 440, diff: 40, label: 'Gamma Wave: 40Hz Binaural', bpm: 120, beatType: 'kick' },
+theta: { base: 200, diff: 6, label: 'Theta Wave: 6Hz Binaural', bpm: 60, beatType: 'heartbeat' },
+dna: { base: 528, diff: 8, label: 'DNA Repair: 528Hz Base', bpm: 72, beatType: 'tone' },
+schumann: { base: 432, diff: 7.83, label: 'Schumann Resonance: 7.83Hz', bpm: 80, beatType: 'drum' }
+};
+
+let beatInterval = null;
+let beatGain = null;
+let beatOsc = null;
+
+// Quaternion class for smooth 3D rotations
+class Quaternion {
+constructor(w, x, y, z) {
+this.w = w || 1;
+this.x = x || 0;
+this.y = y || 0;
+this.z = z || 0;
+}
+
+multiply(q) {
+return new Quaternion(
+this.w * q.w - this.x * q.x - this.y * q.y - this.z * q.z,
+this.w * q.x + this.x * q.w + this.y * q.z - this.z * q.y,
+this.w * q.y - this.x * q.z + this.y * q.w + this.z * q.x,
+this.w * q.z + this.x * q.y - this.y * q.x + this.z * q.w
+);
+}
+
+rotatePoint(p) {
+const qp = new Quaternion(0, p.x, p.y, p.z);
+const qConj = new Quaternion(this.w, -this.x, -this.y, -this.z);
+const result = this.multiply(qp).multiply(qConj);
+return { x: result.x, y: result.y, z: result.z };
+}
+
+static fromAxisAngle(axis, angle) {
+const halfAngle = angle / 2;
+const s = Math.sin(halfAngle);
+return new Quaternion(
+Math.cos(halfAngle),
+axis.x * s,
+axis.y * s,
+axis.z * s
+);
+}
+}
+
+// Canvas setup
+const canvas = document.getElementById('geometryCanvas');
+const ctx = canvas.getContext('2d');
+let rotation = 0;
+let pulsePhase = 0;
+let quaternionRotation = new Quaternion(1, 0, 0, 0);
+
+function resizeCanvas() {
+canvas.width = canvas.offsetWidth;
+canvas.height = canvas.offsetHeight;
+}
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
+
+// Update Carroll quotes
+setInterval(() => {
+const quoteEl = document.getElementById('carrollQuote');
+quoteEl.style.opacity = 0;
+setTimeout(() => {
+quoteIndex = (quoteIndex + 1) % carrollQuotes.length;
+quoteEl.textContent = carrollQuotes[quoteIndex];
+quoteEl.style.opacity = 1;
+}, 1000);
+}, 8000);
+
+// Frequency selection
+document.querySelectorAll('.freq-btn').forEach(btn => {
+btn.addEventListener('click', () => {
+document.querySelectorAll('.freq-btn').forEach(b => b.classList.remove('active'));
+btn.classList.add('active');
+currentMode = btn.dataset.mode;
+updateFrequencyDisplay();
+if (isPlaying) {
+updateOscillators();
+startBeat();
+}
+});
+});
+
+// Geometry selection
+document.querySelectorAll('.geo-btn').forEach(btn => {
+btn.addEventListener('click', () => {
+document.querySelectorAll('.geo-btn').forEach(b => b.classList.remove('active'));
+btn.classList.add('active');
+currentGeo = btn.dataset.geo;
+});
+});
+
+// Play/Pause
+const playBtn = document.getElementById('playBtn');
+playBtn.addEventListener('click', togglePlay);
+
+function togglePlay() {
+if (!isPlaying) {
+startAudio();
+playBtn.textContent = '⏸ RETURN TO REALITY';
+playBtn.classList.add('playing');
+} else {
+stopAudio();
+playBtn.textContent = '▶ DOWN THE RABBIT HOLE';
+playBtn.classList.remove('playing');
+}
+}
+
+function startAudio() {
+audioContext = new (window.AudioContext || window.webkitAudioContext)();
+gainNode = audioContext.createGain();
+gainNode.connect(audioContext.destination);
+
+const vol = document.getElementById('volumeSlider').value / 100;
+gainNode.gain.value = vol;
+
+osc1 = audioContext.createOscillator();
+osc2 = audioContext.createOscillator();
+
+osc1.type = 'sine';
+osc2.type = 'sine';
+
+updateOscillators();
+
+osc1.connect(gainNode);
+osc2.connect(gainNode);
+
+osc1.start();
+osc2.start();
+
+startBeat();
+
+isPlaying = true;
+}
+
+function updateOscillators() {
+if (!osc1 || !osc2) return;
+const freq = frequencies[currentMode];
+osc1.frequency.value = freq.base;
+osc2.frequency.value = freq.base + freq.diff;
+}
+
+function stopAudio() {
+if (osc1) osc1.stop();
+if (osc2) osc2.stop();
+if (audioContext) audioContext.close();
+if (beatInterval) clearInterval(beatInterval);
+osc1 = null;
+osc2 = null;
+audioContext = null;
+gainNode = null;
+beatGain = null;
+beatOsc = null;
+beatInterval = null;
+isPlaying = false;
+}
+
+function startBeat() {
+if (beatInterval) clearInterval(beatInterval);
+
+const freq = frequencies[currentMode];
+const interval = 60000 / freq.bpm;
+
+beatInterval = setInterval(() => {
+playBeat(freq.beatType);
+}, interval);
+}
+
+function playBeat(type) {
+if (!audioContext) return;
+
+beatGain = audioContext.createGain();
+beatGain.connect(audioContext.destination);
+
+const now = audioContext.currentTime;
+const vol = document.getElementById('volumeSlider').value / 100;
+
+if (type === 'kick') {
+beatOsc = audioContext.createOscillator();
+beatOsc.frequency.setValueAtTime(150, now);
+beatOsc.frequency.exponentialRampToValueAtTime(40, now + 0.1);
+beatGain.gain.setValueAtTime(vol * 0.8, now);
+beatGain.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
+beatOsc.connect(beatGain);
+beatOsc.start(now);
+beatOsc.stop(now + 0.2);
+} else if (type === 'heartbeat') {
+beatOsc = audioContext.createOscillator();
+beatOsc.frequency.value = 80;
+beatGain.gain.setValueAtTime(vol * 0.4, now);
+beatGain.gain.exponentialRampToValueAtTime(0.01, now + 0.15);
+beatOsc.connect(beatGain);
+beatOsc.start(now);
+beatOsc.stop(now + 0.15);
+
+const beat2 = audioContext.createOscillator();
+const gain2 = audioContext.createGain();
+beat2.frequency.value = 80;
+gain2.gain.setValueAtTime(vol * 0.3, now + 0.2);
+gain2.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+beat2.connect(gain2);
+gain2.connect(audioContext.destination);
+beat2.start(now + 0.2);
+beat2.stop(now + 0.3);
+} else if (type === 'tone') {
+beatOsc = audioContext.createOscillator();
+beatOsc.frequency.value = 528;
+beatOsc.type = 'sine';
+beatGain.gain.setValueAtTime(0, now);
+beatGain.gain.linearRampToValueAtTime(vol * 0.2, now + 0.1);
+beatGain.gain.linearRampToValueAtTime(0, now + 0.4);
+beatOsc.connect(beatGain);
+beatOsc.start(now);
+beatOsc.stop(now + 0.4);
+} else if (type === 'drum') {
+beatOsc = audioContext.createOscillator();
+beatOsc.frequency.setValueAtTime(100, now);
+beatOsc.frequency.exponentialRampToValueAtTime(50, now + 0.15);
+beatGain.gain.setValueAtTime(vol * 0.6, now);
+beatGain.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
+beatOsc.connect(beatGain);
+beatOsc.start(now);
+beatOsc.stop(now + 0.25);
+}
+}
+
+// Volume control
+const volumeSlider = document.getElementById('volumeSlider');
+const volumeDisplay = document.getElementById('volumeDisplay');
+volumeSlider.addEventListener('input', (e) => {
+const vol = e.target.value;
+volumeDisplay.textContent = vol + '%';
+if (gainNode) {
+gainNode.gain.value = vol / 100;
+}
+});
+
+function updateFrequencyDisplay() {
+document.getElementById('freqDisplay').textContent = frequencies[currentMode].label;
+}
+
+// Initial display
+document.querySelector('.freq-btn').classList.add('active');
+updateFrequencyDisplay();
+document.getElementById('carrollQuote').textContent = carrollQuotes[0];
+
+// Animation loop with quaternion rotations
+function drawGeometry() {
+ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+const centerX = canvas.width / 2;
+const centerY = canvas.height / 2;
+const radius = Math.min(canvas.width, canvas.height) * 0.35;
+
+ctx.save();
+ctx.translate(centerX, centerY);
+
+const pulse = 1 + Math.sin(pulsePhase) * 0.15;
+
+// Update quaternion rotation
+const axis1 = { x: 0.5, y: 0.7, z: 0.3 };
+const deltaQ = Quaternion.fromAxisAngle(axis1, 0.01);
+quaternionRotation = quaternionRotation.multiply(deltaQ);
+
+if (currentGeo === 'wonderland') {
+drawWonderland(radius * pulse);
+} else if (currentGeo === 'looking-glass') {
+drawLookingGlass(radius * pulse);
+} else if (currentGeo === 'cheshire') {
+drawCheshire(radius * pulse);
+} else if (currentGeo === 'rabbit-hole') {
+drawRabbitHole(radius * pulse);
+}
+
+ctx.restore();
+
+rotation += 0.5;
+pulsePhase += 0.05;
+if (pulsePhase > Math.PI * 2) pulsePhase = 0;
+
+requestAnimationFrame(drawGeometry);
+}
+
+function project3D(point, scale) {
+const rotated = quaternionRotation.rotatePoint(point);
+const perspective = 300;
+const z = rotated.z + 3;
+const projScale = perspective / z;
+return {
+x: rotated.x * projScale * scale,
+y: rotated.y * projScale * scale,
+depth: z
+};
+}
+
+function drawWonderland(r) {
+// Tesseract (4D hypercube) projected through quaternions
+const vertices = [];
+for (let i = 0; i < 16; i++) {
+vertices.push({
+x: ((i & 1) ? 1 : -1) * r * 0.3,
+y: ((i & 2) ? 1 : -1) * r * 0.3,
+z: ((i & 4) ? 1 : -1) * r * 0.3
+});
+}
+
+const projected = vertices.map(v => project3D(v, 1));
+
+// Draw edges with chromatic aberration
+const edges = [
+[0,1],[1,3],[3,2],[2,0],[4,5],[5,7],[7,6],[6,4],
+[0,4],[1,5],[2,6],[3,7]
+];
+
+edges.forEach(([i, j]) => {
+const p1 = projected[i];
+const p2 = projected[j];
+const depth = (p1.depth + p2.depth) / 2;
+const alpha = Math.max(0.3, 1 - depth / 6);
+
+// Cyan channel (shifted left)
+ctx.strokeStyle = `rgba(0, 255, 255, ${alpha * 0.6})`;
+ctx.lineWidth = 2;
+ctx.beginPath();
+ctx.moveTo(p1.x - 2, p1.y);
+ctx.lineTo(p2.x - 2, p2.y);
+ctx.stroke();
+
+// Magenta channel (shifted right)
+ctx.strokeStyle = `rgba(255, 0, 255, ${alpha * 0.6})`;
+ctx.beginPath();
+ctx.moveTo(p1.x + 2, p1.y);
+ctx.lineTo(p2.x + 2, p2.y);
+ctx.stroke();
+});
+
+// Draw vertices
+projected.forEach((p, i) => {
+const alpha = Math.max(0.4, 1 - p.depth / 6);
+ctx.fillStyle = `rgba(255, 255, 0, ${alpha})`;
+ctx.beginPath();
+ctx.arc(p.x, p.y, 4, 0, Math.PI * 2);
+ctx.fill();
+});
+}
+
+function drawLookingGlass(r) {
+// Möbius strip effect with mirrored geometry
+const segments = 36;
+
+for (let i = 0; i < segments; i++) {
+const t = (i / segments) * Math.PI * 2;
+const nextT = ((i + 1) / segments) * Math.PI * 2;
+
+const w = 0.3;
+const points = [
+{ x: Math.cos(t) * r, y: Math.sin(t) * r, z: Math.cos(t * 2) * r * 0.3 },
+{ x: Math.cos(t) * r * 1.2, y: Math.sin(t) * r * 1.2, z: Math.sin(t * 2) * r * 0.3 },
+{ x: Math.cos(nextT) * r * 1.2, y: Math.sin(nextT) * r * 1.2, z: Math.sin(nextT * 2) * r * 0.3 },
+{ x: Math.cos(nextT) * r, y: Math.sin(nextT) * r, z: Math.cos(nextT * 2) * r * 0.3 }
+];
+
+const projected = points.map(p => project3D(p, 1));
+const avgDepth = projected.reduce((sum, p) => sum + p.depth, 0) / projected.length;
+const alpha = Math.max(0.2, 1 - avgDepth / 6);
+
+// Gradient from cyan to magenta
+const hue = (i / segments) * 360;
+ctx.fillStyle = `hsla(${hue}, 100%, 50%, ${alpha * 0.3})`;
+ctx.strokeStyle = `hsla(${hue}, 100%, 60%, ${alpha})`;
+ctx.lineWidth = 1.5;
+
+ctx.beginPath();
+ctx.moveTo(projected[0].x, projected[0].y);
+projected.forEach(p => ctx.lineTo(p.x, p.y));
+ctx.closePath();
+ctx.fill();
+ctx.stroke();
+}
+}
+
+function drawCheshire(r) {
+// Grinning cat face that phases in and out with Klein bottle topology
+const layers = 5;
+
+for (let layer = 0; layer < layers; layer++) {
+const layerAlpha = 1 - (layer / layers);
+const layerScale = 1 + (layer * 0.15);
+const phaseShift = (layer / layers) * Math.PI * 2;
+
+// Eyes
+[-1, 1].forEach(side => {
+const eye = {
+x: side * r * 0.3 * layerScale,
+y: -r * 0.2 * layerScale,
+z: Math.sin(pulsePhase + phaseShift) * r * 0.2
+};
+const proj = project3D(eye, 1);
+const eyeAlpha = layerAlpha * Math.max(0.3, 1 - proj.depth / 6);
+
+ctx.fillStyle = `rgba(255, 0, 255, ${eyeAlpha})`;
+ctx.beginPath();
+ctx.arc(proj.x, proj.y, 15 * layerScale, 0, Math.PI * 2);
+ctx.fill();
+
+ctx.fillStyle = `rgba(0, 255, 255, ${eyeAlpha})`;
+ctx.beginPath();
+ctx.arc(proj.x + 3, proj.y, 8 * layerScale, 0, Math.PI * 2);
+ctx.fill();
+});
+
+// Grin
+ctx.strokeStyle = `rgba(255, 0, 255, ${layerAlpha * 0.8})`;
+ctx.lineWidth = 3 * layerScale;
+ctx.beginPath();
+
+for (let i = 0; i <= 20; i++) {
+const t = (i / 20) * Math.PI;
+const grinPoint = {
+x: (Math.cos(t) - 1) * r * 0.5 * layerScale,
+y: Math.sin(t) * r * 0.4 * layerScale + r * 0.1,
+z: Math.cos(pulsePhase + phaseShift + t) * r * 0.15
+};
+const proj = project3D(grinPoint, 1);
+if (i === 0) {
+ctx.moveTo(proj.x, proj.y);
+} else {
+ctx.lineTo(proj.x, proj.y);
+}
+}
+ctx.stroke();
+}
+}
+
+function drawRabbitHole(r) {
+// Infinite spiral tunnel with non-Euclidean depth
+const spirals = 8;
+const depth = 15;
+
+for (let d = depth; d > 0; d--) {
+const scale = d / depth;
+const spiralR = r * scale;
+const zDepth = (depth - d) * 0.5;
+
+for (let s = 0; s < spirals; s++) {
+const angleOffset = (s / spirals) * Math.PI * 2;
+
+ctx.beginPath();
+for (let i = 0; i <= 30; i++) {
+const t = (i / 30) * Math.PI * 2;
+const angle = t + angleOffset + rotation * 0.02 * d;
+
+// Non-Euclidean: things get bigger as they go deeper
+const paradoxScale = 1 + (1 - scale) * 0.5;
+
+const point = {
+x: Math.cos(angle) * spiralR * paradoxScale,
+y: Math.sin(angle) * spiralR * paradoxScale,
+z: zDepth + Math.sin(angle * 3 + pulsePhase) * 0.3
+};
+
+const proj = project3D(point, 1);
+const alpha = Math.max(0.1, scale * (1 - proj.depth / 8));
+
+if (i === 0) {
+ctx.moveTo(proj.x, proj.y);
+} else {
+ctx.lineTo(proj.x, proj.y);
+}
+}
+
+const hue = (s / spirals * 360 + d * 20 + rotation) % 360;
+const alpha = Math.max(0.2, scale * 0.7);
+ctx.strokeStyle = `hsla(${hue}, 100%, 50%, ${alpha})`;
+ctx.lineWidth = 2 * scale;
+ctx.stroke();
+
+// Chromatic aberration on outer spirals
+if (d > depth * 0.7) {
+ctx.strokeStyle = `rgba(0, 255, 255, ${alpha * 0.4})`;
+ctx.stroke();
+}
+}
+}
+
+// Central void
+ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
+ctx.beginPath();
+ctx.arc(0, 0, r * 0.1, 0, Math.PI * 2);
+ctx.fill();
+
+ctx.strokeStyle = '#ff00ff';
+ctx.lineWidth = 2;
+ctx.stroke();
+}
+
+// Start animation
+console.log('Starting animation...');
+console.log('Canvas dimensions:', canvas.width, canvas.height);
+
+// Test draw to verify canvas works
+ctx.fillStyle = '#ff00ff';
+ctx.fillRect(10, 10, 50, 50);
+console.log('Test square drawn');
+
+// Start main animation
+drawGeometry();
+</script>
+```
+
 </body>
 </html>
