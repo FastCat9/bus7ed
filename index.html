@@ -4,8 +4,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>∞ Through The Looking Glass ∞</title>
+<title>PROPAGANDA IN OUR SCHOOLS</title>
 <style>
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Oswald:wght@400;700&display=swap');
+
+```
 * {
 margin: 0;
 padding: 0;
@@ -13,824 +16,432 @@ box-sizing: border-box;
 }
 
 body {
-background: linear-gradient(135deg, #0a0a0a 0%, #1a0033 50%, #000a1a 100%);
-color: #00ffff;
-font-family: 'Courier New', monospace;
+font-family: 'Oswald', sans-serif;
+background: #000;
+color: #fff;
 overflow-x: hidden;
+}
+
+.grain {
+position: fixed;
+top: 0;
+left: 0;
+width: 100%;
+height: 100%;
+background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300"><filter id="noise"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="4" /></filter><rect width="100%" height="100%" filter="url(%23noise)" opacity="0.05"/></svg>');
+pointer-events: none;
+z-index: 1000;
+opacity: 0.4;
+}
+
+.hero {
 min-height: 100vh;
 display: flex;
 flex-direction: column;
+justify-content: center;
 align-items: center;
-padding: 20px;
-}
-
-.container {
-max-width: 900px;
-width: 100%;
-}
-
-h1 {
-text-align: center;
-font-size: 2rem;
-margin: 20px 0;
-text-shadow: 0 0 20px #ff00ff, 0 0 40px #00ffff;
-animation: pulse 3s ease-in-out infinite;
-}
-
-@keyframes pulse {
-0%, 100% { opacity: 1; transform: scale(1); }
-50% { opacity: 0.8; transform: scale(1.02); }
-}
-
-.canvas-container {
 position: relative;
-width: 100%;
-height: 500px;
-border: 2px solid #ff00ff;
-border-radius: 10px;
-margin: 20px 0;
-box-shadow: 0 0 30px rgba(255, 0, 255, 0.5), inset 0 0 30px rgba(0, 255, 255, 0.2);
-overflow: hidden;
-background: radial-gradient(circle at center, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.95) 100%);
+background: linear-gradient(180deg, #1a0000 0%, #000 100%);
+border-bottom: 5px solid #fff;
 }
 
-canvas {
-display: block;
-width: 100%;
-height: 100%;
+.title {
+font-family: 'Bebas Neue', cursive;
+font-size: clamp(3rem, 10vw, 8rem);
+text-align: center;
+letter-spacing: 0.1em;
+text-transform: uppercase;
+background: linear-gradient(45deg, #fff, #ff0000);
+-webkit-background-clip: text;
+-webkit-text-fill-color: transparent;
+background-clip: text;
+animation: glitch 3s infinite;
+margin: 20px;
+text-shadow: 0 0 30px rgba(255,0,0,0.5);
 }
 
-.carroll-quote {
+@keyframes glitch {
+0%, 100% { transform: translate(0); }
+20% { transform: translate(-2px, 2px); }
+40% { transform: translate(-2px, -2px); }
+60% { transform: translate(2px, 2px); }
+80% { transform: translate(2px, -2px); }
+}
+
+.subtitle {
+font-size: clamp(1.2rem, 3vw, 2rem);
+text-align: center;
+margin: 20px;
+letter-spacing: 0.2em;
+opacity: 0.9;
+}
+
+.scroll-indicator {
+position: absolute;
+bottom: 30px;
+animation: bounce 2s infinite;
+font-size: 3rem;
+opacity: 0.6;
+}
+
+@keyframes bounce {
+0%, 100% { transform: translateY(0); }
+50% { transform: translateY(-20px); }
+}
+
+.section {
+min-height: 100vh;
+padding: 60px 20px;
+display: flex;
+flex-direction: column;
+justify-content: center;
+align-items: center;
+position: relative;
+border-bottom: 3px solid #333;
+}
+
+.section-dark {
+background: #0a0a0a;
+}
+
+.section-red {
+background: linear-gradient(135deg, #1a0000 0%, #0a0000 100%);
+}
+
+.elephant-container {
+position: relative;
+width: 300px;
+height: 300px;
+margin: 40px auto;
+}
+
+.elephant {
+font-size: 200px;
 position: absolute;
 top: 50%;
 left: 50%;
 transform: translate(-50%, -50%);
-color: rgba(255, 0, 255, 0.4);
-font-size: 1.2rem;
-font-style: italic;
-text-align: center;
+filter: drop-shadow(0 0 20px rgba(255,0,0,0.5));
+animation: shake 0.5s infinite;
+}
+
+@keyframes shake {
+0%, 100% { transform: translate(-50%, -50%) rotate(0deg); }
+25% { transform: translate(-48%, -50%) rotate(-2deg); }
+75% { transform: translate(-52%, -50%) rotate(2deg); }
+}
+
+.lightning {
+position: absolute;
+width: 100%;
+height: 100%;
+top: 0;
+left: 0;
 pointer-events: none;
-animation: fadeInOut 8s ease-in-out infinite;
-text-shadow: 0 0 10px rgba(255, 0, 255, 0.6);
-max-width: 80%;
 }
 
-@keyframes fadeInOut {
-0%, 100% { opacity: 0; }
-50% { opacity: 0.6; }
+.bolt {
+position: absolute;
+width: 4px;
+background: linear-gradient(to bottom, #fff, #ff0000, transparent);
+animation: strike 2s infinite;
+opacity: 0;
 }
 
-.controls {
-background: rgba(26, 0, 51, 0.8);
-border: 1px solid #ff00ff;
-border-radius: 10px;
-padding: 20px;
-margin: 20px 0;
-box-shadow: 0 0 20px rgba(255, 0, 255, 0.3);
+.bolt:nth-child(1) { left: 20%; height: 150px; animation-delay: 0s; }
+.bolt:nth-child(2) { left: 50%; height: 180px; animation-delay: 0.3s; }
+.bolt:nth-child(3) { left: 80%; height: 160px; animation-delay: 0.6s; }
+
+@keyframes strike {
+0%, 90%, 100% { opacity: 0; }
+92%, 94%, 96% { opacity: 1; }
 }
 
-.control-group {
+.content-box {
+max-width: 900px;
+margin: 40px auto;
+padding: 40px;
+background: rgba(255,255,255,0.05);
+border: 2px solid #fff;
+border-left: 10px solid #ff0000;
+position: relative;
+}
+
+.content-box h2 {
+font-family: 'Bebas Neue', cursive;
+font-size: clamp(2rem, 5vw, 4rem);
+margin-bottom: 30px;
+letter-spacing: 0.1em;
+color: #ff0000;
+text-shadow: 0 0 20px rgba(255,0,0,0.5);
+}
+
+.content-box p {
+font-size: clamp(1rem, 2vw, 1.3rem);
+line-height: 1.8;
+margin-bottom: 20px;
+}
+
+.fact-list {
+list-style: none;
+margin: 30px 0;
+}
+
+.fact-list li {
+padding: 15px;
 margin: 15px 0;
+background: rgba(255,0,0,0.1);
+border-left: 5px solid #ff0000;
+font-size: clamp(0.9rem, 2vw, 1.2rem);
+transition: all 0.3s;
 }
 
-label {
-display: block;
-margin-bottom: 8px;
-color: #00ffff;
-font-size: 0.9rem;
+.fact-list li:hover {
+background: rgba(255,0,0,0.2);
+transform: translateX(10px);
 }
 
-.frequency-buttons {
+.comparison {
 display: grid;
-grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-gap: 10px;
-margin: 15px 0;
+grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+gap: 30px;
+max-width: 1200px;
+margin: 40px auto;
+padding: 20px;
 }
 
-button {
-background: linear-gradient(135deg, #1a0033 0%, #33006d 100%);
-border: 2px solid #ff00ff;
-color: #00ffff;
-padding: 12px 20px;
-border-radius: 5px;
-cursor: pointer;
-font-family: 'Courier New', monospace;
-font-size: 0.9rem;
-transition: all 0.3s ease;
-text-shadow: 0 0 5px #00ffff;
+.card {
+background: rgba(0,0,0,0.8);
+border: 3px solid #fff;
+padding: 30px;
+position: relative;
+overflow: hidden;
+transition: all 0.3s;
 }
 
-button:hover {
-background: linear-gradient(135deg, #33006d 0%, #5500aa 100%);
-box-shadow: 0 0 15px rgba(255, 0, 255, 0.6);
-transform: translateY(-2px);
+.card:hover {
+transform: scale(1.05);
+border-color: #ff0000;
+box-shadow: 0 0 40px rgba(255,0,0,0.5);
 }
 
-button.active {
-background: linear-gradient(135deg, #5500aa 0%, #8800ff 100%);
-box-shadow: 0 0 20px rgba(255, 0, 255, 0.8);
+.card h3 {
+font-family: 'Bebas Neue', cursive;
+font-size: 2.5rem;
+margin-bottom: 20px;
+letter-spacing: 0.1em;
 }
 
-.play-button {
+.card-winner {
+border-color: #00ff00;
+}
+
+.card-winner h3 {
+color: #00ff00;
+}
+
+.card-loser {
+border-color: #ff0000;
+}
+
+.card-loser h3 {
+color: #ff0000;
+}
+
+.stat {
+padding: 10px 0;
+border-bottom: 1px solid rgba(255,255,255,0.1);
+font-size: 1.1rem;
+}
+
+.stat strong {
+color: #ff0000;
+}
+
+.money-rain {
+position: absolute;
 width: 100%;
-font-size: 1.2rem;
-padding: 15px;
-margin: 20px 0;
-background: linear-gradient(135deg, #ff00ff 0%, #8800ff 100%);
+height: 100%;
+top: 0;
+left: 0;
+pointer-events: none;
+overflow: hidden;
 }
 
-.play-button.playing {
-background: linear-gradient(135deg, #00ffff 0%, #0088ff 100%);
+.dollar {
+position: absolute;
+font-size: 30px;
+opacity: 0.3;
+animation: fall linear infinite;
 }
 
-input[type="range"] {
-width: 100%;
-height: 6px;
-border-radius: 3px;
-background: linear-gradient(to right, #1a0033, #ff00ff);
-outline: none;
--webkit-appearance: none;
+@keyframes fall {
+to {
+transform: translateY(100vh) rotate(360deg);
+}
 }
 
-input[type="range"]::-webkit-slider-thumb {
--webkit-appearance: none;
-appearance: none;
-width: 20px;
-height: 20px;
-border-radius: 50%;
-background: #00ffff;
-cursor: pointer;
-box-shadow: 0 0 10px #00ffff;
-}
-
-input[type="range"]::-moz-range-thumb {
-width: 20px;
-height: 20px;
-border-radius: 50%;
-background: #00ffff;
-cursor: pointer;
-box-shadow: 0 0 10px #00ffff;
-border: none;
-}
-
-.geometry-mode {
-display: flex;
-gap: 10px;
-flex-wrap: wrap;
-}
-
-.info {
-background: rgba(0, 255, 255, 0.1);
-border: 1px solid #00ffff;
-border-radius: 5px;
-padding: 15px;
-margin: 20px 0;
-font-size: 0.85rem;
-line-height: 1.6;
-}
-
-.frequency-display {
+.truth-bomb {
+background: #ff0000;
+color: #000;
+padding: 40px;
+margin: 40px auto;
+max-width: 800px;
+font-size: clamp(1.2rem, 3vw, 2rem);
+font-weight: 700;
 text-align: center;
-font-size: 1.5rem;
-color: #ff00ff;
-text-shadow: 0 0 10px #ff00ff;
+border: 5px solid #fff;
+box-shadow: 0 0 50px rgba(255,0,0,0.8);
+animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+0%, 100% { transform: scale(1); }
+50% { transform: scale(1.02); }
+}
+
+footer {
+background: #000;
+padding: 40px 20px;
+text-align: center;
+border-top: 5px solid #ff0000;
+}
+
+footer p {
+font-size: clamp(1rem, 2vw, 1.5rem);
 margin: 10px 0;
+letter-spacing: 0.1em;
 }
 
-.quote {
-text-align: center;
-font-style: italic;
-color: #8800ff;
-margin: 20px 0;
-font-size: 0.9rem;
-opacity: 0.8;
+@media (max-width: 768px) {
+.comparison {
+grid-template-columns: 1fr;
+}
 }
 </style>
-``` tick tick tick 
+```
 
 </head>
 <body>
-<div class="container">
-<h1>∞ THROUGH THE LOOKING GLASS ∞</h1>
+<div class="grain"></div>
 
-```tock tock tock 
-<div class="quote">"NOT FOR GOLD nor SWORD nor CRown, for Knowing, for WEaving the wORld UPSIDE Down. +1-267-281-5131"</div>
+```
+<section class="hero">
+<h1 class="title">PROPAGANDA<br>IN OUR SCHOOLS</h1>
+<p class="subtitle">MYTHOLOGY VS. REALITY</p>
+<div class="scroll-indicator">↓</div>
+</section>
 
-<div class="canvas-container">
-<canvas id="geometryCanvas"></canvas>
-<div class="carroll-quote" id="carrollQuote"></div>
-</div>
-
-<div class="controls">
-<div class="frequency-display" id="freqDisplay">Select a frequency mode</div>
-
-<div class="control-group">
-<label>Binaural Frequency Mode:</label>
-<div class="frequency-buttons">
-<button class="freq-btn" data-mode="gamma">
-Gamma (40Hz)<br><small>Higher Consciousness</small>
-</button>
-<button class="freq-btn" data-mode="theta">
-Theta (6Hz)<br><small>Deep Meditation</small>
-</button>
-<button class="freq-btn" data-mode="dna">
-DNA Repair (528Hz)<br><small>Cellular Healing</small>
-</button>
-<button class="freq-btn" data-mode="schumann">
-Schumann (7.83Hz)<br><small>Earth Resonance</small>
-</button>
+<section class="section section-red">
+<div class="elephant-container">
+<div class="elephant">🐘</div>
+<div class="lightning">
+<div class="bolt"></div>
+<div class="bolt"></div>
+<div class="bolt"></div>
 </div>
 </div>
 
-<button class="play-button" id="playBtn">▶ DOWN THE RABBIT HOLE</button>
+<div class="content-box">
+<h2>THE EDISON LIE</h2>
+<p>They teach your kids that Thomas Edison was a genius inventor who brought light to the world. <strong>BULLSHIT.</strong></p>
 
-<div class="control-group">
-<label>Volume: <span id="volumeDisplay">30%</span></label>
-<input type="range" id="volumeSlider" min="0" max="100" value="30">
+<p>Edison didn't invent the light bulb. He stole it. He had money, patents, and an army of lawyers. What he DID invent was corporate propaganda.</p>
+
+<ul class="fact-list">
+<li>🔥 Edison publicly ELECTROCUTED elephants, dogs, and horses to discredit Nikola Tesla's superior AC power system</li>
+<li>🔥 He stole credit from Lewis Latimer, the Black inventor who created the carbon filament that actually made light bulbs work</li>
+<li>🔥 He ran a factory of inventors but took sole credit for THEIR work</li>
+<li>🔥 He used patent warfare to destroy competitors who had better technology</li>
+<li>🔥 His greed and ego killed animals across America just to protect his profits</li>
+</ul>
+
+<p style="margin-top: 30px; font-size: 1.5rem; color: #ff0000; font-weight: 700;">This is who we tell children to worship. A man who murdered animals to protect his monopoly.</p>
+</div>
+</section>
+
+<section class="section section-dark">
+<div class="money-rain" id="moneyRain"></div>
+
+<div class="content-box">
+<h2>BUSINESS "GENIUS"</h2>
+<p>They sell you the same lie today. They tell you to worship billionaires. To idolize "business genius." Let's look at the FACTS.</p>
 </div>
 
-<div class="control-group">
-<label>Geometry Visualization:</label>
-<div class="geometry-mode">
-<button class="geo-btn active" data-geo="wonderland">Wonderland</button>
-<button class="geo-btn" data-geo="looking-glass">Looking Glass</button>
-<button class="geo-btn" data-geo="cheshire">Cheshire</button>
-<button class="geo-btn" data-geo="rabbit-hole">Rabbit Hole</button>
-</div>
-</div>
-</div>
-
-<div class="info">
-<strong>How to use:</strong> Select a frequency mode, adjust volume, then press the button. Use headphones for binaural beats to work properly. Each frequency targets different brainwave states. The geometry uses quaternion mathematics to rotate through impossible dimensions.
+<div class="comparison">
+<div class="card card-winner">
+<h3>WARREN BUFFETT</h3>
+<div class="stat"><strong>Started with:</strong> $100,000</div>
+<div class="stat"><strong>Built it to:</strong> $120 BILLION</div>
+<div class="stat"><strong>How:</strong> Actual business skill and long-term strategy</div>
+<div class="stat"><strong>Bankruptcies:</strong> ZERO</div>
+<div class="stat"><strong>Track record:</strong> 60+ years of consistent 20% returns</div>
+<div class="stat"><strong>Charity:</strong> Gave away $50+ billion</div>
 </div>
 
-<div class="quote">"We're all mad here. I'm mad. You're mad." -Echo Team Deep Research (COLOR is a VIBRATION of LIGHT ( Thz Wavelength glasses in devlopment stages, check back 1-844-937-3262)Cause, Principle, and One eternal
-
-From whom being, life, and movement are suspended,
-
-And which extends itself in length, breadth, and depth,
-
-To whatever is in Heaven, on Earth, and Hell;
-
-With sense, with reason, with mind, I discern,
-
-That there is no act, measure, nor calculation, which can comprehend
-
-That force, that vastness and that number,
-
-Which exceeds whatever is inferior, middle, and highest;
-
-Blind error, avaricious time, adverse fortune,
-
-Deaf envy, vile madness, jealous iniquity,
-
-Crude heart, perverse spirit, insane audacity,
-
-Will not be sufficient to obscure the air for me,
-
-Will not place the veil before my eyes,
-
-Will never bring it about that I shall not
-
-Contemplate my beautiful Sun." - Giordano Bruno
-
-"Anything we take in the Universe, because it has in itself that which is All in All, includes in its own way, the entire soul of the world, which is entirely in any part of it." ~ Giordano Bruno.
-
-Eternity maintaineth her substance throughout time, immensity throughout space, universal form throughout motion. ~ Giordano Bruno(burnt alive)... 51%.... Nous Club 77.... te desseso carinaaaa....)</div>
+<div class="card card-loser">
+<h3>DONALD TRUMP</h3>
+<div class="stat"><strong>Started with:</strong> $413 MILLION inheritance</div>
+<div class="stat"><strong>Built it to:</strong> $2-4 billion (disputed)</div>
+<div class="stat"><strong>How:</strong> Branding and reality TV</div>
+<div class="stat"><strong>Bankruptcies:</strong> SIX</div>
+<div class="stat"><strong>Track record:</strong> Would've made MORE money in index funds</div>
+<div class="stat"><strong>Notable failures:</strong> Trump Steaks, Trump University (fraud settlement), Trump Casinos, Trump Airlines</div>
 </div>
+</div>
+
+<div class="truth-bomb">
+ONE INHERITED HUNDREDS OF MILLIONS AND SQUANDERED IT.<br>
+ONE BUILT BILLIONS FROM THOUSANDS THROUGH ACTUAL SKILL.<br><br>
+GUESS WHICH ONE THE MEDIA CALLS A "BUSINESS GENIUS"?
+</div>
+</section>
+
+<section class="section section-red">
+<div class="content-box">
+<h2>STOP WORSHIPPING GREED</h2>
+<p>Edison electrocuted animals to protect his profits. Modern "geniuses" bankrupt companies, scam students, and inherit wealth while the media worships them.</p>
+
+<p style="margin-top: 30px; font-size: 1.4rem;">Your children deserve the TRUTH. Not propaganda. Not mythology. Not hero worship of greedy men who destroy everything in their path.</p>
+
+<ul class="fact-list">
+<li>💡 Teach them about collaboration, not "lone genius" myths</li>
+<li>💡 Show them the difference between inheritance and innovation</li>
+<li>💡 Let them question why schools glorify monopolists and frauds</li>
+<li>💡 Give them the tools to recognize propaganda when they see it</li>
+</ul>
+</div>
+</section>
+
+<footer>
+<p>QUESTION EVERYTHING.</p>
+<p>VERIFY FACTS.</p>
+<p>TEACH TRUTH.</p>
+<p style="margin-top: 30px; opacity: 0.7;">Share this. Our kids deserve better than lies.</p>
+</footer>
 
 <script>
-// Carroll quotes that cycle
-const carrollQuotes = [
-"Curiouser and curiouser...",
-"Why, sometimes I've believed as many as six impossible things before breakfast.",
-"If you don't know where you are going, any road will get you there.",
-"It's no use going back to yesterday, because I was a different person then.",
-"Imagination is the only weapon in the war against reality.",
-"We're all mad here."
-];
-let quoteIndex = 0;
-
-// Audio setup
-let audioContext = null;
-let osc1 = null;
-let osc2 = null;
-let gainNode = null;
-let isPlaying = false;
-let currentMode = 'gamma';
-let currentGeo = 'wonderland';
-
-const frequencies = {
-gamma: { base: 440, diff: 40, label: 'Gamma Wave: 40Hz Binaural', bpm: 120, beatType: 'kick' },
-theta: { base: 200, diff: 6, label: 'Theta Wave: 6Hz Binaural', bpm: 60, beatType: 'heartbeat' },
-dna: { base: 528, diff: 8, label: 'DNA Repair: 528Hz Base', bpm: 72, beatType: 'tone' },
-schumann: { base: 432, diff: 7.83, label: 'Schumann Resonance: 7.83Hz', bpm: 80, beatType: 'drum' }
-};
-
-let beatInterval = null;
-let beatGain = null;
-let beatOsc = null;
-
-// Quaternion class for smooth 3D rotations
-class Quaternion {
-constructor(w, x, y, z) {
-this.w = w || 1;
-this.x = x || 0;
-this.y = y || 0;
-this.z = z || 0;
+// Money rain effect
+const moneyRain = document.getElementById('moneyRain');
+for (let i = 0; i < 15; i++) {
+const dollar = document.createElement('div');
+dollar.className = 'dollar';
+dollar.textContent = '💰';
+dollar.style.left = Math.random() * 100 + '%';
+dollar.style.animationDuration = (Math.random() * 3 + 4) + 's';
+dollar.style.animationDelay = Math.random() * 5 + 's';
+moneyRain.appendChild(dollar);
 }
 
-multiply(q) {
-return new Quaternion(
-this.w * q.w - this.x * q.x - this.y * q.y - this.z * q.z,
-this.w * q.x + this.x * q.w + this.y * q.z - this.z * q.y,
-this.w * q.y - this.x * q.z + this.y * q.w + this.z * q.x,
-this.w * q.z + this.x * q.y - this.y * q.x + this.z * q.w
-);
-}
-
-rotatePoint(p) {
-const qp = new Quaternion(0, p.x, p.y, p.z);
-const qConj = new Quaternion(this.w, -this.x, -this.y, -this.z);
-const result = this.multiply(qp).multiply(qConj);
-return { x: result.x, y: result.y, z: result.z };
-}
-
-static fromAxisAngle(axis, angle) {
-const halfAngle = angle / 2;
-const s = Math.sin(halfAngle);
-return new Quaternion(
-Math.cos(halfAngle),
-axis.x * s,
-axis.y * s,
-axis.z * s
-);
-}
-}
-
-// Canvas setup
-const canvas = document.getElementById('geometryCanvas');
-const ctx = canvas.getContext('2d');
-let rotation = 0;
-let pulsePhase = 0;
-let quaternionRotation = new Quaternion(1, 0, 0, 0);
-
-function resizeCanvas() {
-canvas.width = canvas.offsetWidth;
-canvas.height = canvas.offsetHeight;
-}
-resizeCanvas();
-window.addEventListener('resize', resizeCanvas);
-
-// Update Carroll quotes
-setInterval(() => {
-const quoteEl = document.getElementById('carrollQuote');
-quoteEl.style.opacity = 0;
-setTimeout(() => {
-quoteIndex = (quoteIndex + 1) % carrollQuotes.length;
-quoteEl.textContent = carrollQuotes[quoteIndex];
-quoteEl.style.opacity = 1;
-}, 1000);
-}, 8000);
-
-// Frequency selection
-document.querySelectorAll('.freq-btn').forEach(btn => {
-btn.addEventListener('click', () => {
-document.querySelectorAll('.freq-btn').forEach(b => b.classList.remove('active'));
-btn.classList.add('active');
-currentMode = btn.dataset.mode;
-updateFrequencyDisplay();
-if (isPlaying) {
-updateOscillators();
-startBeat();
-}
+// Smooth scroll
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+anchor.addEventListener('click', function (e) {
+e.preventDefault();
+document.querySelector(this.getAttribute('href')).scrollIntoView({
+behavior: 'smooth'
 });
 });
-
-// Geometry selection
-document.querySelectorAll('.geo-btn').forEach(btn => {
-btn.addEventListener('click', () => {
-document.querySelectorAll('.geo-btn').forEach(b => b.classList.remove('active'));
-btn.classList.add('active');
-currentGeo = btn.dataset.geo;
 });
-});
-
-// Play/Pause
-const playBtn = document.getElementById('playBtn');
-playBtn.addEventListener('click', togglePlay);
-
-function togglePlay() {
-if (!isPlaying) {
-startAudio();
-playBtn.textContent = '⏸ RETURN TO REALITY';
-playBtn.classList.add('playing');
-} else {
-stopAudio();
-playBtn.textContent = '▶ DOWN THE RABBIT HOLE';
-playBtn.classList.remove('playing');
-}
-}
-
-function startAudio() {
-audioContext = new (window.AudioContext || window.webkitAudioContext)();
-gainNode = audioContext.createGain();
-gainNode.connect(audioContext.destination);
-
-const vol = document.getElementById('volumeSlider').value / 100;
-gainNode.gain.value = vol;
-
-osc1 = audioContext.createOscillator();
-osc2 = audioContext.createOscillator();
-
-osc1.type = 'sine';
-osc2.type = 'sine';
-
-updateOscillators();
-
-osc1.connect(gainNode);
-osc2.connect(gainNode);
-
-osc1.start();
-osc2.start();
-
-startBeat();
-
-isPlaying = true;
-}
-
-function updateOscillators() {
-if (!osc1 || !osc2) return;
-const freq = frequencies[currentMode];
-osc1.frequency.value = freq.base;
-osc2.frequency.value = freq.base + freq.diff;
-}
-
-function stopAudio() {
-if (osc1) osc1.stop();
-if (osc2) osc2.stop();
-if (audioContext) audioContext.close();
-if (beatInterval) clearInterval(beatInterval);
-osc1 = null;
-osc2 = null;
-audioContext = null;
-gainNode = null;
-beatGain = null;
-beatOsc = null;
-beatInterval = null;
-isPlaying = false;
-}
-
-function startBeat() {
-if (beatInterval) clearInterval(beatInterval);
-
-const freq = frequencies[currentMode];
-const interval = 60000 / freq.bpm;
-
-beatInterval = setInterval(() => {
-playBeat(freq.beatType);
-}, interval);
-}
-
-function playBeat(type) {
-if (!audioContext) return;
-
-beatGain = audioContext.createGain();
-beatGain.connect(audioContext.destination);
-
-const now = audioContext.currentTime;
-const vol = document.getElementById('volumeSlider').value / 100;
-
-if (type === 'kick') {
-beatOsc = audioContext.createOscillator();
-beatOsc.frequency.setValueAtTime(150, now);
-beatOsc.frequency.exponentialRampToValueAtTime(40, now + 0.1);
-beatGain.gain.setValueAtTime(vol * 0.8, now);
-beatGain.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
-beatOsc.connect(beatGain);
-beatOsc.start(now);
-beatOsc.stop(now + 0.2);
-} else if (type === 'heartbeat') {
-beatOsc = audioContext.createOscillator();
-beatOsc.frequency.value = 80;
-beatGain.gain.setValueAtTime(vol * 0.4, now);
-beatGain.gain.exponentialRampToValueAtTime(0.01, now + 0.15);
-beatOsc.connect(beatGain);
-beatOsc.start(now);
-beatOsc.stop(now + 0.15);
-
-const beat2 = audioContext.createOscillator();
-const gain2 = audioContext.createGain();
-beat2.frequency.value = 80;
-gain2.gain.setValueAtTime(vol * 0.3, now + 0.2);
-gain2.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
-beat2.connect(gain2);
-gain2.connect(audioContext.destination);
-beat2.start(now + 0.2);
-beat2.stop(now + 0.3);
-} else if (type === 'tone') {
-beatOsc = audioContext.createOscillator();
-beatOsc.frequency.value = 528;
-beatOsc.type = 'sine';
-beatGain.gain.setValueAtTime(0, now);
-beatGain.gain.linearRampToValueAtTime(vol * 0.2, now + 0.1);
-beatGain.gain.linearRampToValueAtTime(0, now + 0.4);
-beatOsc.connect(beatGain);
-beatOsc.start(now);
-beatOsc.stop(now + 0.4);
-} else if (type === 'drum') {
-beatOsc = audioContext.createOscillator();
-beatOsc.frequency.setValueAtTime(100, now);
-beatOsc.frequency.exponentialRampToValueAtTime(50, now + 0.15);
-beatGain.gain.setValueAtTime(vol * 0.6, now);
-beatGain.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
-beatOsc.connect(beatGain);
-beatOsc.start(now);
-beatOsc.stop(now + 0.25);
-}
-}
-
-// Volume control
-const volumeSlider = document.getElementById('volumeSlider');
-const volumeDisplay = document.getElementById('volumeDisplay');
-volumeSlider.addEventListener('input', (e) => {
-const vol = e.target.value;
-volumeDisplay.textContent = vol + '%';
-if (gainNode) {
-gainNode.gain.value = vol / 100;
-}
-});
-
-function updateFrequencyDisplay() {
-document.getElementById('freqDisplay').textContent = frequencies[currentMode].label;
-}
-
-// Initial display
-document.querySelector('.freq-btn').classList.add('active');
-updateFrequencyDisplay();
-document.getElementById('carrollQuote').textContent = carrollQuotes[0];
-
-// Animation loop with quaternion rotations
-function drawGeometry() {
-ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-const centerX = canvas.width / 2;
-const centerY = canvas.height / 2;
-const radius = Math.min(canvas.width, canvas.height) * 0.35;
-
-ctx.save();
-ctx.translate(centerX, centerY);
-
-const pulse = 1 + Math.sin(pulsePhase) * 0.15;
-
-// Update quaternion rotation
-const axis1 = { x: 0.5, y: 0.7, z: 0.3 };
-const deltaQ = Quaternion.fromAxisAngle(axis1, 0.01);
-quaternionRotation = quaternionRotation.multiply(deltaQ);
-
-if (currentGeo === 'wonderland') {
-drawWonderland(radius * pulse);
-} else if (currentGeo === 'looking-glass') {
-drawLookingGlass(radius * pulse);
-} else if (currentGeo === 'cheshire') {
-drawCheshire(radius * pulse);
-} else if (currentGeo === 'rabbit-hole') {
-drawRabbitHole(radius * pulse);
-}
-
-ctx.restore();
-
-rotation += 0.5;
-pulsePhase += 0.05;
-if (pulsePhase > Math.PI * 2) pulsePhase = 0;
-
-requestAnimationFrame(drawGeometry);
-}
-
-function project3D(point, scale) {
-const rotated = quaternionRotation.rotatePoint(point);
-const perspective = 300;
-const z = rotated.z + 3;
-const projScale = perspective / z;
-return {
-x: rotated.x * projScale * scale,
-y: rotated.y * projScale * scale,
-depth: z
-};
-}
-
-function drawWonderland(r) {
-// Tesseract (4D hypercube) projected through quaternions
-const vertices = [];
-for (let i = 0; i < 16; i++) {
-vertices.push({
-x: ((i & 1) ? 1 : -1) * r * 0.3,
-y: ((i & 2) ? 1 : -1) * r * 0.3,
-z: ((i & 4) ? 1 : -1) * r * 0.3
-});
-}
-
-const projected = vertices.map(v => project3D(v, 1));
-
-// Draw edges with chromatic aberration
-const edges = [
-[0,1],[1,3],[3,2],[2,0],[4,5],[5,7],[7,6],[6,4],
-[0,4],[1,5],[2,6],[3,7]
-];
-
-edges.forEach(([i, j]) => {
-const p1 = projected[i];
-const p2 = projected[j];
-const depth = (p1.depth + p2.depth) / 2;
-const alpha = Math.max(0.3, 1 - depth / 6);
-
-// Cyan channel (shifted left)
-ctx.strokeStyle = `rgba(0, 255, 255, ${alpha * 0.6})`;
-ctx.lineWidth = 2;
-ctx.beginPath();
-ctx.moveTo(p1.x - 2, p1.y);
-ctx.lineTo(p2.x - 2, p2.y);
-ctx.stroke();
-
-// Magenta channel (shifted right)
-ctx.strokeStyle = `rgba(255, 0, 255, ${alpha * 0.6})`;
-ctx.beginPath();
-ctx.moveTo(p1.x + 2, p1.y);
-ctx.lineTo(p2.x + 2, p2.y);
-ctx.stroke();
-});
-
-// Draw vertices
-projected.forEach((p, i) => {
-const alpha = Math.max(0.4, 1 - p.depth / 6);
-ctx.fillStyle = `rgba(255, 255, 0, ${alpha})`;
-ctx.beginPath();
-ctx.arc(p.x, p.y, 4, 0, Math.PI * 2);
-ctx.fill();
-});
-}
-
-function drawLookingGlass(r) {
-// Möbius strip effect with mirrored geometry
-const segments = 36;
-
-for (let i = 0; i < segments; i++) {
-const t = (i / segments) * Math.PI * 2;
-const nextT = ((i + 1) / segments) * Math.PI * 2;
-
-const w = 0.3;
-const points = [
-{ x: Math.cos(t) * r, y: Math.sin(t) * r, z: Math.cos(t * 2) * r * 0.3 },
-{ x: Math.cos(t) * r * 1.2, y: Math.sin(t) * r * 1.2, z: Math.sin(t * 2) * r * 0.3 },
-{ x: Math.cos(nextT) * r * 1.2, y: Math.sin(nextT) * r * 1.2, z: Math.sin(nextT * 2) * r * 0.3 },
-{ x: Math.cos(nextT) * r, y: Math.sin(nextT) * r, z: Math.cos(nextT * 2) * r * 0.3 }
-];
-
-const projected = points.map(p => project3D(p, 1));
-const avgDepth = projected.reduce((sum, p) => sum + p.depth, 0) / projected.length;
-const alpha = Math.max(0.2, 1 - avgDepth / 6);
-
-// Gradient from cyan to magenta
-const hue = (i / segments) * 360;
-ctx.fillStyle = `hsla(${hue}, 100%, 50%, ${alpha * 0.3})`;
-ctx.strokeStyle = `hsla(${hue}, 100%, 60%, ${alpha})`;
-ctx.lineWidth = 1.5;
-
-ctx.beginPath();
-ctx.moveTo(projected[0].x, projected[0].y);
-projected.forEach(p => ctx.lineTo(p.x, p.y));
-ctx.closePath();
-ctx.fill();
-ctx.stroke();
-}
-}
-
-function drawCheshire(r) {
-// Grinning cat face that phases in and out with Klein bottle topology
-const layers = 5;
-
-for (let layer = 0; layer < layers; layer++) {
-const layerAlpha = 1 - (layer / layers);
-const layerScale = 1 + (layer * 0.15);
-const phaseShift = (layer / layers) * Math.PI * 2;
-
-// Eyes
-[-1, 1].forEach(side => {
-const eye = {
-x: side * r * 0.3 * layerScale,
-y: -r * 0.2 * layerScale,
-z: Math.sin(pulsePhase + phaseShift) * r * 0.2
-};
-const proj = project3D(eye, 1);
-const eyeAlpha = layerAlpha * Math.max(0.3, 1 - proj.depth / 6);
-
-ctx.fillStyle = `rgba(255, 0, 255, ${eyeAlpha})`;
-ctx.beginPath();
-ctx.arc(proj.x, proj.y, 15 * layerScale, 0, Math.PI * 2);
-ctx.fill();
-
-ctx.fillStyle = `rgba(0, 255, 255, ${eyeAlpha})`;
-ctx.beginPath();
-ctx.arc(proj.x + 3, proj.y, 8 * layerScale, 0, Math.PI * 2);
-ctx.fill();
-});
-
-// Grin
-ctx.strokeStyle = `rgba(255, 0, 255, ${layerAlpha * 0.8})`;
-ctx.lineWidth = 3 * layerScale;
-ctx.beginPath();
-
-for (let i = 0; i <= 20; i++) {
-const t = (i / 20) * Math.PI;
-const grinPoint = {
-x: (Math.cos(t) - 1) * r * 0.5 * layerScale,
-y: Math.sin(t) * r * 0.4 * layerScale + r * 0.1,
-z: Math.cos(pulsePhase + phaseShift + t) * r * 0.15
-};
-const proj = project3D(grinPoint, 1);
-if (i === 0) {
-ctx.moveTo(proj.x, proj.y);
-} else {
-ctx.lineTo(proj.x, proj.y);
-}
-}
-ctx.stroke();
-}
-}
-
-function drawRabbitHole(r) {
-// Infinite spiral tunnel with non-Euclidean depth
-const spirals = 8;
-const depth = 15;
-
-for (let d = depth; d > 0; d--) {
-const scale = d / depth;
-const spiralR = r * scale;
-const zDepth = (depth - d) * 0.5;
-
-for (let s = 0; s < spirals; s++) {
-const angleOffset = (s / spirals) * Math.PI * 2;
-
-ctx.beginPath();
-for (let i = 0; i <= 30; i++) {
-const t = (i / 30) * Math.PI * 2;
-const angle = t + angleOffset + rotation * 0.02 * d;
-
-// Non-Euclidean: things get bigger as they go deeper
-const paradoxScale = 1 + (1 - scale) * 0.5;
-
-const point = {
-x: Math.cos(angle) * spiralR * paradoxScale,
-y: Math.sin(angle) * spiralR * paradoxScale,
-z: zDepth + Math.sin(angle * 3 + pulsePhase) * 0.3
-};
-
-const proj = project3D(point, 1);
-const alpha = Math.max(0.1, scale * (1 - proj.depth / 8));
-
-if (i === 0) {
-ctx.moveTo(proj.x, proj.y);
-} else {
-ctx.lineTo(proj.x, proj.y);
-}
-}
-
-const hue = (s / spirals * 360 + d * 20 + rotation) % 360;
-const alpha = Math.max(0.2, scale * 0.7);
-ctx.strokeStyle = `hsla(${hue}, 100%, 50%, ${alpha})`;
-ctx.lineWidth = 2 * scale;
-ctx.stroke();
-
-// Chromatic aberration on outer spirals
-if (d > depth * 0.7) {
-ctx.strokeStyle = `rgba(0, 255, 255, ${alpha * 0.4})`;
-ctx.stroke();
-}
-}
-}
-
-// Central void
-ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
-ctx.beginPath();
-ctx.arc(0, 0, r * 0.1, 0, Math.PI * 2);
-ctx.fill();
-
-ctx.strokeStyle = '#ff00ff';
-ctx.lineWidth = 2;
-ctx.stroke();
-}
-
-// Start animation
-console.log('Starting animation...');
-console.log('Canvas dimensions:', canvas.width, canvas.height);
-
-// Test draw to verify canvas works
-ctx.fillStyle = '#ff00ff';
-ctx.fillRect(10, 10, 50, 50);
-console.log('Test square drawn');
-
-// Start main animation
-drawGeometry();
 </script>
 ```
 
